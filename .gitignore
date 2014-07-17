@@ -1,0 +1,16 @@
+/web/company/
+/web/bundles/
+/web/assets/
+/web/css/
+/web/images/
+/web/js/
+/app/bootstrap.php.cache
+/app/cache/*
+/app/config/parameters.yml
+/app/logs/*
+!app/cache/.gitkeep
+!app/logs/.gitkeep
+/build/
+/vendor/
+/bin/
+/composer.phar
