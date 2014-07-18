@@ -1,0 +1,7 @@
+hope_rest_categories:
+    path:     /categories
+    defaults: { _controller: HopeRestBundle:Category:index }
+
+hope_rest_category:
+    path:     /category/{id}
+    defaults: { _controller: HopeRestBundle:Category:category}

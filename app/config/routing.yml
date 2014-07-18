@@ -1,0 +1,4 @@
+hope_rest:
+    resource: "@HopeRestBundle/Resources/config/routing.yml"
+    prefix:   /
+
