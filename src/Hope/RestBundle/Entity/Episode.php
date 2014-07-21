@@ -41,7 +41,7 @@ class Episode {
 
         /**
          * @ORM\ManyToOne(targetEntity="Program", inversedBy="videos")
-         * @ORM\JoinColumn(name="category_id", referencedColumnName="id")
+         * @ORM\JoinColumn(name="program_id", referencedColumnName="id")
          */
         protected $program;
 

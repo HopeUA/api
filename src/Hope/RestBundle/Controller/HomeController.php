@@ -16,11 +16,51 @@ class HomeController extends Controller
 
         $settings = array();
 
+#########  Получение списка баннеров
         $settings['banners']=array();
-        $settings['live']=array();
+        $programs = $this->getDoctrine()
+            ->getRepository('HopeRestBundle:Banner')
+            ->findAll();
+
+        $bannersList = array();
+        foreach($programs as $key => $obj){
+            $bannersList[$key]['id']    = $obj->getId();
+            $bannersList[$key]['image'] = $obj->getImage();
+            $bannersList[$key]['url']   = $obj->getUrl();
+        }
+
+        $settings['banners'] = $bannersList;$settings['banners'] = $bannersList;
+
+#########  Получаем Live
+        $settings['live'] = array();
+
+#########  Получаем список всех категорий
         $settings['categories']=array();
+        $categories = $this->getDoctrine()
+            ->getRepository('HopeRestBundle:Category')
+            ->findAll();
+
+        $categoriesList = array();
+        foreach($categories as $key => $obj){
+            $categoriesList[$key]['id']       = $obj->getId();
+            $categoriesList[$key]['title']    = $obj->getTitle();
+            $categoriesList[$key]['programs'] = $obj->getPrograms->toArray();
+
+        }
+
+
+
+
+        $settings['categories'] = $categoriesList;
+
+#########  Получаем список Top Videos
         $settings['top_videos']=array();
+
+#########  Получаем список Программ
         $settings['programs']=array();
+
+
+#########  Получаем список Страниц
         $settings['about']=array();
 
         //формат JSON

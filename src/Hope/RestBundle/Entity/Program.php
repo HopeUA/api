@@ -38,17 +38,26 @@ class Program {
     protected $desc_full;
 
     /**
+     * @ORM\Column(type="integer")
+     */
+    protected $category_id;
+
+    /**
      * @ORM\ManyToOne(targetEntity="Category", inversedBy="programs")
      * @ORM\JoinColumn(name="category_id", referencedColumnName="id")
-     */
+    */
     protected $category;
 
     /**
-     * @ORM\OneToMany(targetEntity="Episode", mappedBy="videos")
+     * @ORM\OneToMany(targetEntity="Episode", mappedBy="program")
      */
     protected $videos;
 
 
+    public function __construct()
+    {
+        $this->videos = new ArrayCollection();
+    }
 
     /**
      * Get id
