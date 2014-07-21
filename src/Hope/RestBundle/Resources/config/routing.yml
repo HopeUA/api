@@ -1,7 +1,25 @@
-hope_rest_categories:
-    path:     /categories
-    defaults: { _controller: HopeRestBundle:Category:index }
-
 hope_rest_category:
     path:     /category/{id}
     defaults: { _controller: HopeRestBundle:Category:category}
+    requirements:
+      id: \d+
+
+hope_rest_categories:
+    path:     /categories/
+    defaults: { _controller: HopeRestBundle:Category:index }
+
+hope_rest_program:
+    path:     /program/{id}
+    defaults: { _controller: HopeRestBundle:Program:program}
+    requirements:
+          id: \d+
+
+hope_rest_programs_category:
+    path:     /programs/{cat_id}
+    defaults: { _controller: HopeRestBundle:Program:category }
+
+
+hope_rest_programs_all:
+    path:     /programs
+    defaults: { _controller: HopeRestBundle:Program:index }
+
