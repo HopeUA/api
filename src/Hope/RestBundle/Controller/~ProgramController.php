@@ -56,17 +56,6 @@ class ProgramController extends Controller
     public function categoryAction($cat_id){
 
         //получаем список программ данной категории
-        $getCatPrograms = $this->getDoctrine()
-            ->getRepository('HopeRestBundle:Program')
-            ->findBy(
-                array('category_id' => $cat_id),
-                array('code'=>'asc'),
-                1,
-                0
-            );
 
-
-        print_r($getCatPrograms);
-        die();
     }
 }

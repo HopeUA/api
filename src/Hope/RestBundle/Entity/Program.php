@@ -38,10 +38,15 @@ class Program {
     protected $desc_full;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Category", inversedBy="program")
+     * @ORM\ManyToOne(targetEntity="Category", inversedBy="programs")
      * @ORM\JoinColumn(name="category_id", referencedColumnName="id")
      */
     protected $category;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Episode", mappedBy="videos")
+     */
+    protected $videos;
 
 
 
