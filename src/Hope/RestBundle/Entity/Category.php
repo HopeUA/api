@@ -22,6 +22,17 @@ class Category {
      */
     protected $title;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Program", mappedBy="category")
+     */
+    protected $programs;
+
+
+    public function __construct()
+    {
+        $this->programs = new ArrayCollection();
+    }
+
 
     /**
      * Get id
@@ -49,10 +60,20 @@ class Category {
     /**
      * Get title
      *
-     * @return string 
+     * @return string
      */
     public function getTitle()
     {
         return $this->title;
+    }
+
+    /**
+     * Get programs
+     *
+     * @return string
+     */
+    public function getPrograms()
+    {
+        return $this->programs;
     }
 }

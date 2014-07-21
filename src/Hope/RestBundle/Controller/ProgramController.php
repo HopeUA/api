@@ -61,8 +61,8 @@ class ProgramController extends Controller
             ->findBy(
                 array('category_id' => $cat_id),
                 array('code'=>'asc'),
-                1, // offset
-                10 // limit
+                1,
+                0
             );
 
 

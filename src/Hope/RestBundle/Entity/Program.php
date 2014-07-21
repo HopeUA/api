@@ -38,9 +38,11 @@ class Program {
     protected $desc_full;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\ManyToOne(targetEntity="Category", inversedBy="program")
+     * @ORM\JoinColumn(name="category_id", referencedColumnName="id")
      */
-    protected $category_id;
+    protected $category;
+
 
 
     /**
@@ -145,26 +147,14 @@ class Program {
         return $this->desc_full;
     }
 
-    /**
-     * Set category_id
-     *
-     * @param integer $categoryId
-     * @return Program
-     */
-    public function setCategoryId($categoryId)
-    {
-        $this->category_id = $categoryId;
-
-        return $this;
-    }
 
     /**
-     * Get category_id
+     * Get category
      *
-     * @return integer 
+     *
      */
-    public function getCategoryId()
+    public function getCategory()
     {
-        return $this->category_id;
+        return $this->category;
     }
 }
