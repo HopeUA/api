@@ -44,7 +44,10 @@ class HomeController extends Controller
         foreach($categories as $key => $obj){
             $categoriesList[$key]['id']       = $obj->getId();
             $categoriesList[$key]['title']    = $obj->getTitle();
-            $categoriesList[$key]['programs'] = $obj->getPrograms->toArray();
+            $programs = $obj->getPrograms();
+            foreach($programs as $value){
+                print_r($value);
+            }
 
         }
 
