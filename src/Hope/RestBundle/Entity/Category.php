@@ -26,7 +26,7 @@ class Category {
     /**
      * @ORM\Column(type="integer")
      */
-    protected $order;
+    protected $sort;
 
     /**
      * @ORM\OneToMany(targetEntity="Program", mappedBy="category")
@@ -74,26 +74,26 @@ class Category {
     }
 
     /**
-     * Set order
+     * Set sort
      *
      * @param string $order
      * @return Category
      */
-    public function setOrder($order)
+    public function setSort($sort)
     {
-        $this->order = $order;
+        $this->order = $sort;
 
         return $this;
     }
 
     /**
-     * Get title
+     * Get sort
      *
      * @return string
      */
-    public function getOrder()
+    public function getSort()
     {
-        return $this->order;
+        return $this->sort;
     }
 
     /**
