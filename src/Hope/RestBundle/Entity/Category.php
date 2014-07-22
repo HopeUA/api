@@ -24,6 +24,11 @@ class Category {
     protected $title;
 
     /**
+     * @ORM\Column(type="integer")
+     */
+    protected $order;
+
+    /**
      * @ORM\OneToMany(targetEntity="Program", mappedBy="category")
      */
     protected $programs;
@@ -66,6 +71,29 @@ class Category {
     public function getTitle()
     {
         return $this->title;
+    }
+
+    /**
+     * Set order
+     *
+     * @param string $order
+     * @return Category
+     */
+    public function setOrder($order)
+    {
+        $this->order = $order;
+
+        return $this;
+    }
+
+    /**
+     * Get title
+     *
+     * @return string
+     */
+    public function getOrder()
+    {
+        return $this->order;
     }
 
     /**

@@ -31,7 +31,7 @@ class Episode {
         /**
          * @ORM\Column(type="text")
          */
-        protected $desc;
+        protected $descr;
 
         /**
          * @ORM\Column(type="string", length=150)
@@ -137,26 +137,26 @@ class Episode {
     }
 
     /**
-     * Set desc
+     * Set descr
      *
      * @param string $desc
      * @return Episode
      */
-    public function setDesc($desc)
+    public function setDescr($descr)
     {
-        $this->desc = $desc;
+        $this->descr = $descr;
 
         return $this;
     }
 
     /**
-     * Get desc
+     * Get descr
      *
      * @return string 
      */
-    public function getDesc()
+    public function getDescr()
     {
-        return $this->desc;
+        return $this->descr;
     }
 
     /**

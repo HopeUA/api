@@ -11,8 +11,9 @@ class HomeController extends Controller
 {
     public function indexAction(Request $request){
 
+######## Получаем GET переменные
         $device = $request->get('device');
-        $lang = $request->get('lang');
+        $lang   = $request->get('lang');
 
         $settings = array();
 
@@ -30,6 +31,7 @@ class HomeController extends Controller
         }
 
         $settings['banners'] = $bannersList;
+        unset($bannersList);
 
 #########  Получаем Live
         $settings['live'] = array();
@@ -44,14 +46,14 @@ class HomeController extends Controller
             $settings['live'][] = $stream;
         }
 
-
-
-
 #########  Получаем список всех категорий
         $settings['categories']=array();
         $categories = $this->getDoctrine()
             ->getRepository('HopeRestBundle:Category')
-            ->findAll();
+            ->findBy(
+                array(),
+                array('order' => 'ASC')
+            );
 
         $categoriesList = array();
         foreach($categories as $key => $obj){
@@ -65,17 +67,44 @@ class HomeController extends Controller
                 $categoriesList[$key]['programs'][]['code']       = $program->getCode();
                 $categoriesList[$key]['programs'][]['title']      = $program->getTitle();
                 $categoriesList[$key]['programs'][]['desc_short'] = $program->getDescShort();
-                $categoriesList[$key]['programs'][]['desc_full'] = $program->getDescFull();
+                $categoriesList[$key]['programs'][]['desc_full']  = $program->getDescFull();
             }
 
         }
 
         $settings['categories'] = $categoriesList;
+        unset($categoriesList);
 
 #########  Получаем список Top Videos
         $settings['top_videos']=array();
 
+        $em = $this->getDoctrine()->getManager();
+        /*'SELECT x
+            FROM (SELECT v,
+                   CASE
+                     WHEN @category_id != p.category_id THEN @rownum := 1
+                     ELSE @rownum := @rownum + 1
+                   END AS rank,
+                   @category_id := p.category_id AS var_category
+            FROM HopeRestBundle:Episode v
+            LEFT JOIN HopeRestBundle:Program p ON p.id = v.program_id
+            JOIN (SELECT @rownum := NULL, @category_id := "") r
+            ORDER BY p.category_id) x
+        WHERE x.rank <= 2'*/
+        $query = $em->createQuery(
+            'SELECT v FROM   HopeRestBundle:Episode v LEFT JOIN HopeRestBundle:Program p WITH p.id = v.program_id
+            WHERE ( SELECT COUNT(v1) FROM HopeRestBundle:Episode v1 LEFT JOIN HopeRestBundle:Program p1 WITH p1.id = v1.program_id WHERE p1.category_id = p.category_id AND v1.id >= v.id ) <= 2'
+        );
+        $topvideos = $query->getResult();
+        $videoList = array();
+        foreach($topvideos as $key=>$video){
+            $videoList[$key]['id'] = $video->getId();
+            $videoList[$key]['code'] = $video->getCode();
+            $videoList[$key]['title'] = $video->getTitle();
+        }
 
+        $settings['top_videos'] = $videoList;
+        unset($videoList);
 
 #########  Получаем список Страниц
         $settings['about']=array();
@@ -92,11 +121,12 @@ class HomeController extends Controller
             $pageList[$key]['text']    = $obj->getText();
         }
         $settings['about'] = $pageList;
+        unset($pageList);
 
-        //формат JSON
+######### формат JSON
         $settingsJSON = json_encode($settings);
 
-
+######### вывод
         $response = new Response($settingsJSON);
         $response->headers->set('Content-Type', 'application/json');
         return $response;
