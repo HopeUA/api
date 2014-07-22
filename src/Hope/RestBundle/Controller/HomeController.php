@@ -5,6 +5,7 @@ namespace Hope\RestBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Yaml\Parser;
 
 class HomeController extends Controller
 {
@@ -12,7 +13,6 @@ class HomeController extends Controller
 
         $device = $request->get('device');
         $lang = $request->get('lang');
-
 
         $settings = array();
 
@@ -29,10 +29,23 @@ class HomeController extends Controller
             $bannersList[$key]['url']   = $obj->getUrl();
         }
 
-        $settings['banners'] = $bannersList;$settings['banners'] = $bannersList;
+        $settings['banners'] = $bannersList;
 
 #########  Получаем Live
         $settings['live'] = array();
+        $yaml = new Parser();
+        try {
+            $liveStreams = $yaml->parse(file_get_contents(__DIR__.'/../Resources/config/main.yml'));
+        } catch (ParseException $e) {
+            printf("Unable to parse the YAML string: %s", $e->getMessage());
+        }
+
+        foreach($liveStreams as $stream){
+            $settings['live'][] = $stream;
+        }
+
+
+
 
 #########  Получаем список всех категорий
         $settings['categories']=array();
@@ -44,27 +57,41 @@ class HomeController extends Controller
         foreach($categories as $key => $obj){
             $categoriesList[$key]['id']       = $obj->getId();
             $categoriesList[$key]['title']    = $obj->getTitle();
+            $categoriesList[$key]['programs'] = array();
+
             $programs = $obj->getPrograms();
-            foreach($programs as $value){
-                print_r($value);
+            foreach($programs as $program){
+                $categoriesList[$key]['programs'][]['id']         = $program->getId();
+                $categoriesList[$key]['programs'][]['code']       = $program->getCode();
+                $categoriesList[$key]['programs'][]['title']      = $program->getTitle();
+                $categoriesList[$key]['programs'][]['desc_short'] = $program->getDescShort();
+                $categoriesList[$key]['programs'][]['desc_full'] = $program->getDescFull();
             }
 
         }
-
-
-
 
         $settings['categories'] = $categoriesList;
 
 #########  Получаем список Top Videos
         $settings['top_videos']=array();
 
-#########  Получаем список Программ
-        $settings['programs']=array();
 
 
 #########  Получаем список Страниц
         $settings['about']=array();
+
+        $pages = $this->getDoctrine()
+            ->getRepository('HopeRestBundle:Page')
+            ->findAll();
+
+        $pageList = array();
+        foreach($pages as $key => $obj){
+            $pageList[$key]['id']      = $obj->getId();
+            $pageList[$key]['section'] = $obj->getSection();
+            $pageList[$key]['title']   = $obj->getTitle();
+            $pageList[$key]['text']    = $obj->getText();
+        }
+        $settings['about'] = $pageList;
 
         //формат JSON
         $settingsJSON = json_encode($settings);
