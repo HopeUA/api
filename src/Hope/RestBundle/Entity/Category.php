@@ -39,7 +39,18 @@ class Category {
         $this->programs = new ArrayCollection();
     }
 
+    /**
+     * Set Id
+     *
+     * @param integer $id
+     * @return Category
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
 
+        return $this;
+    }
     /**
      * Get id
      *
@@ -81,7 +92,7 @@ class Category {
      */
     public function setSort($sort)
     {
-        $this->order = $sort;
+        $this->sort = $sort;
 
         return $this;
     }
@@ -104,5 +115,28 @@ class Category {
     public function getPrograms()
     {
         return $this->programs;
+    }
+
+    /**
+     * Add programs
+     *
+     * @param \Hope\RestBundle\Entity\Program $programs
+     * @return Category
+     */
+    public function addProgram(\Hope\RestBundle\Entity\Program $programs)
+    {
+        $this->programs[] = $programs;
+
+        return $this;
+    }
+
+    /**
+     * Remove programs
+     *
+     * @param \Hope\RestBundle\Entity\Program $programs
+     */
+    public function removeProgram(\Hope\RestBundle\Entity\Program $programs)
+    {
+        $this->programs->removeElement($programs);
     }
 }

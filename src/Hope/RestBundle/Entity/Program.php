@@ -172,4 +172,73 @@ class Program {
     {
         return $this->category;
     }
+
+    /**
+     * Set category_id
+     *
+     * @param integer $categoryId
+     * @return Program
+     */
+    public function setCategoryId($categoryId)
+    {
+        $this->category_id = $categoryId;
+
+        return $this;
+    }
+
+    /**
+     * Get category_id
+     *
+     * @return integer 
+     */
+    public function getCategoryId()
+    {
+        return $this->category_id;
+    }
+
+    /**
+     * Set category
+     *
+     * @param \Hope\RestBundle\Entity\Category $category
+     * @return Program
+     */
+    public function setCategory(\Hope\RestBundle\Entity\Category $category = null)
+    {
+        $this->category = $category;
+
+        return $this;
+    }
+
+    /**
+     * Add videos
+     *
+     * @param \Hope\RestBundle\Entity\Episode $videos
+     * @return Program
+     */
+    public function addVideo(\Hope\RestBundle\Entity\Episode $videos)
+    {
+        $this->videos[] = $videos;
+
+        return $this;
+    }
+
+    /**
+     * Remove videos
+     *
+     * @param \Hope\RestBundle\Entity\Episode $videos
+     */
+    public function removeVideo(\Hope\RestBundle\Entity\Episode $videos)
+    {
+        $this->videos->removeElement($videos);
+    }
+
+    /**
+     * Get videos
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getVideos()
+    {
+        return $this->videos;
+    }
 }

@@ -11,13 +11,13 @@ class HomeController extends Controller
 {
     public function indexAction(Request $request){
 
-// Получаем GET переменные
+        // Получаем GET переменные
         $device = $request->get('device');
         $lang   = $request->get('lang');
 
         $settings = array();
 
-//  Получение списка баннеров
+        //  Получение списка баннеров
         $settings['banners']=array();
         $programs = $this->getDoctrine()
             ->getRepository('HopeRestBundle:Banner')
@@ -33,7 +33,7 @@ class HomeController extends Controller
         $settings['banners'] = $bannersList;
         unset($bannersList);
 
-//  Получаем Live
+        //  Получаем Live
         $settings['live'] = array();
         $yaml = new Parser();
         try {
@@ -46,13 +46,13 @@ class HomeController extends Controller
             $settings['live'][] = $stream;
         }
 
-//  Получаем список всех категорий
+        //  Получаем список всех категорий
         $settings['categories']=array();
         $categories = $this->getDoctrine()
             ->getRepository('HopeRestBundle:Category')
             ->findBy(
                 array(),
-                array('order' => 'ASC')
+                array('sort' => 'ASC')
             );
 
         $categoriesList = array();
@@ -75,7 +75,7 @@ class HomeController extends Controller
         $settings['categories'] = $categoriesList;
         unset($categoriesList);
 
-//  Получаем список Top Videos
+        //  Получаем список Top Videos
         $settings['top_videos']=array();
 
         $em = $this->getDoctrine()->getManager();
@@ -106,7 +106,7 @@ class HomeController extends Controller
         $settings['top_videos'] = $videoList;
         unset($videoList);
 
-//  Получаем список Страниц
+        //  Получаем список Страниц
         $settings['about']=array();
 
         $pages = $this->getDoctrine()
@@ -123,10 +123,10 @@ class HomeController extends Controller
         $settings['about'] = $pageList;
         unset($pageList);
 
-// формат JSON
+        // формат JSON
         $settingsJSON = json_encode($settings);
 
-// вывод
+        // вывод
         $response = new Response($settingsJSON);
         $response->headers->set('Content-Type', 'application/json');
         return $response;
