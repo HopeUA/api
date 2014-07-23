@@ -29,6 +29,19 @@ class HopeCategory {
 
 
     /**
+     * Set c_id
+     *
+     * @param string $cId
+     * @return HopeCategory
+     */
+    public function setCId($cId)
+    {
+        $this->c_id = $cId;
+
+        return $this;
+    }
+
+    /**
      * Get c_id
      *
      * @return integer 

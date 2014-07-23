@@ -61,6 +61,18 @@ class Program {
     }
 
     /**
+     * Set $id
+     *
+     * @param string $id
+     * @return Program
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+    /**
      * Get id
      *
      * @return integer 

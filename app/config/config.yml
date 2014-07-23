@@ -71,16 +71,18 @@ doctrine:
                 connection: default
                 mappings:
                     HopeRestBundle:  ~
-                    HopeImport:
-                        type:       xml
-                        is_bundle:  false
-                        dir:        %kernel.root_dir%/../src/Hope/RestBundle/Entity/Import
-                        prefix:     Hope\RestBundle\Entity\Import
-                        alias:      HopeImport
+
             dbimport:
                 connection: dbimport
                 mappings:
                     HopeRestBundle: ~
+                    HopeImport:
+                        type:       annotation
+                        is_bundle:  false
+                        dir:        %kernel.root_dir%/../src/Hope/RestBundle/Entity/Import
+                        prefix:     Hope\RestBundle\Entity\Import
+                        alias:      HopeImport
+
             auto_generate_proxy_classes: %kernel.debug%
             #auto_mapping: true
 

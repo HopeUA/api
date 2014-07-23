@@ -81,6 +81,19 @@ class Episode {
         protected $watch;
 
     /**
+     * Set id
+     *
+     * @param string $id
+     * @return Episode
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
      * Get id
      *
      * @return integer 
