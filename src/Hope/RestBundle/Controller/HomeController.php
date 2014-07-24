@@ -6,6 +6,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Yaml\Parser;
+use Doctrine\ORM\Query\ResultSetMapping;
+use Doctrine\ORM\EntityRepository;
 
 class HomeController extends Controller
 {
@@ -79,25 +81,43 @@ class HomeController extends Controller
         $settings['top_videos']=array();
 
         $em = $this->getDoctrine()->getManager();
-        /*'SELECT x
-            FROM (SELECT v,
-                   CASE
-                     WHEN @category_id != p.category_id THEN @rownum := 1
-                     ELSE @rownum := @rownum + 1
-                   END AS rank,
-                   @category_id := p.category_id AS var_category
-            FROM HopeRestBundle:Episode v
-            LEFT JOIN HopeRestBundle:Program p ON p.id = v.program_id
-            JOIN (SELECT @rownum := NULL, @category_id := "") r
-            ORDER BY p.category_id) x
-        WHERE x.rank <= 2'*/
+        $rsm = new ResultSetMapping;
+        $rsm->addEntityResult('HopeRestBundle:Episode', 'v');
+        $rsm->addFieldResult('v', 'id', 'id');
+        $rsm->addFieldResult('v', 'code', 'code');
+        $rsm->addFieldResult('v', 'title', 'title');
+
+/*      // этот запрос в самом MySQL выполняет 4мс
+        $query = $em->createNativeQuery("
+            SELECT VID, VTitle FROM (
+            SELECT SequencedSet.*, @Rnum := if(mvcat = CTitle, @Rnum + 1, 1) RowNumber from (
+            SELECT CTitle, VCode, VTitle, VID, @vcat mvcat,
+              @VCat := CTitle  as VCAT
+            FROM (
+            SELECT C.title CTitle, V.code VCode, V.title VTitle, V.id VID
+            FROM video V
+            INNER JOIN program P
+            on P.id = V.program_id
+            INNER JOIN category C
+            on C.id = P.category_id
+            ORDER BY C.title, V.id DESC) OrderedSet) SequencedSet) X
+            where X.ROWNUMBER<=2
+            ", $rsm);
+*/
+        // этот запрос в самом MySQL выполняет 2мс
         $query = $em->createQuery(
             'SELECT v FROM   HopeRestBundle:Episode v LEFT JOIN HopeRestBundle:Program p WITH p.id = v.program_id
-            WHERE ( SELECT COUNT(v1) FROM HopeRestBundle:Episode v1 LEFT JOIN HopeRestBundle:Program p1 WITH p1.id = v1.program_id WHERE p1.category_id = p.category_id AND v1.id >= v.id ) <= 2'
+            WHERE ( SELECT COUNT(v1.id) FROM HopeRestBundle:Episode v1 LEFT JOIN HopeRestBundle:Program p1 WITH p1.id = v1.program_id WHERE p1.category_id = p.category_id AND v1.id >= v.id ) <= 2'
         );
-        $topvideos = $query->getResult();
+
+        $topVideos = $query->getResult();
+/*      print '<pre>';
+        print_r($topVideos);
+        print '</pre>';
+        die();
+*/
         $videoList = array();
-        foreach($topvideos as $key=>$video){
+        foreach($topVideos as $key=>$video){
             $videoList[$key]['id'] = $video->getId();
             $videoList[$key]['code'] = $video->getCode();
             $videoList[$key]['title'] = $video->getTitle();
