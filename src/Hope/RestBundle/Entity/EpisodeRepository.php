@@ -34,9 +34,9 @@ class EpisodeRepository extends EntityRepository
 
         //код категории
         if(!empty($params['program_category'])) {
-            $query->leftjoin('HopeRestBundle:Program', 'p', 'WITH', 'p.category_id = '.$params['program_category']);
-            //$query->andWhere('p.category_id = :program_category');
-            //$query->setParameter('program_category',$params['program_category']);
+            $query->leftjoin('HopeRestBundle:Program', 'p', 'WITH', 'e.program_id = p.id');
+            $query->andWhere('p.category_id = :category');
+            $query->setParameter('category',$params['program_category']);
         }
 
         if(!empty($params['text'])) {
@@ -59,17 +59,18 @@ class EpisodeRepository extends EntityRepository
         $offset             = $limit[0];
         $quantity           = $limit[1];
 
-
-
         $query->setMaxResults($quantity);
         $query->setFirstResult($offset);
         $results = $query->getQuery()->getResult();
-
-/*        $qqq = $query->getQuery();
+/*
+        $qqq = $query->getQuery();
+        print '<pre>';
         print_r(array(
             'sql'        => $qqq->getSQL(),
+            'dql'=> $qqq->getDql(),
             'parameters' => $qqq->getParameters(),
         ));
+        print '</pre>';
         die();
 */
 
