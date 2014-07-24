@@ -50,6 +50,7 @@ class HomeController extends Controller
 
         //  Получаем список всех категорий
         $settings['categories']=array();
+        $settings['top_videos']=array();
         $categories = $this->getDoctrine()
             ->getRepository('HopeRestBundle:Category')
             ->findBy(
@@ -58,19 +59,46 @@ class HomeController extends Controller
             );
 
         $categoriesList = array();
+
         foreach($categories as $key => $obj){
             $categoriesList[$key]['id']       = $obj->getId();
             $categoriesList[$key]['title']    = $obj->getTitle();
             $categoriesList[$key]['programs'] = array();
 
             $programs = $obj->getPrograms();
-            foreach($programs as $program){
-                $categoriesList[$key]['programs'][]['id']         = $program->getId();
-                $categoriesList[$key]['programs'][]['code']       = $program->getCode();
-                $categoriesList[$key]['programs'][]['title']      = $program->getTitle();
-                $categoriesList[$key]['programs'][]['desc_short'] = $program->getDescShort();
-                $categoriesList[$key]['programs'][]['desc_full']  = $program->getDescFull();
+            foreach($programs as $keyProgr=>$program){
+                $categoriesList[$key]['programs'][$keyProgr]['id']         = $program->getId();
+                $categoriesList[$key]['programs'][$keyProgr]['code']       = $program->getCode();
+                $categoriesList[$key]['programs'][$keyProgr]['title']      = $program->getTitle();
+                $categoriesList[$key]['programs'][$keyProgr]['desc_short'] = $program->getDescShort();
+                $categoriesList[$key]['programs'][$keyProgr]['desc_full']  = $program->getDescFull();
+
+                $videos = $program->getVideos();
+                //$videoList = array();
+                foreach($videos as $keyVideo => $video){
+                    $vid = $video->getId();
+                    $categoriesList[$key]['videos'][$vid]['id'] = $vid;
+                    $categoriesList[$key]['videos'][$vid]['code'] = $video->getCode();
+                    $categoriesList[$key]['videos'][$vid]['title'] = $video->getTitle();
+                    $categoriesList[$key]['videos'][$vid]['descr'] = $video->getDescription();
+                    $categoriesList[$key]['videos'][$vid]['author'] = $video->getAuthor();
+                    $categoriesList[$key]['videos'][$vid]['duration'] = $video->getDuration();
+                    $categoriesList[$key]['videos'][$vid]['publish_time'] = $video->getPublishTime();
+                    $categoriesList[$key]['videos'][$vid]['hd'] = $video->getHd();
+                    $categoriesList[$key]['videos'][$vid]['image'] = $video->getImage();
+                    $categoriesList[$key]['videos'][$vid]['link'] = array(
+                        "download" => $video->getDownload(),
+                        "watch"    => $video->getWatch()
+                    );
+                    $programVideo = $video->getProgram();
+                    $categoriesList[$key]['videos'][$vid]['program'] = $programVideo->getCode();
+                }
             }
+            //krsort($categoriesList[$key]['videos']);
+            $videoList[$key][] = end($categoriesList[$key]['videos']);
+            $videoList[$key][] = prev($categoriesList[$key]['videos']);
+            unset($categoriesList[$key]['videos']);
+
 
         }
 
@@ -78,46 +106,10 @@ class HomeController extends Controller
         unset($categoriesList);
 
         //  Получаем список Top Videos
-        $settings['top_videos']=array();
 
+        $settings['top_videos'] = $videoList;
+/*
         $em = $this->getDoctrine()->getManager();
-        $rsm = new ResultSetMapping;
-        $rsm->addEntityResult('HopeRestBundle:Episode', 'v');
-        $rsm->addFieldResult('v', 'id', 'id');
-        $rsm->addFieldResult('v', 'code', 'code');
-        $rsm->addFieldResult('v', 'title', 'title');
-
-/*      // этот запрос в самом MySQL выполняет 4мс
-        // http://sqlfiddle.com/#!2/6ad8c6/52
-        // но в Доктрине выдает пустой результат
-        $query = $em->createNativeQuery("
-            SELECT VID, VTitle FROM (
-            SELECT SequencedSet.*, @Rnum := if(mvcat = CTitle, @Rnum + 1, 1) RowNumber from (
-            SELECT CTitle, VCode, VTitle, VID, @vcat mvcat,
-              @VCat := CTitle  as VCAT
-            FROM (
-            SELECT C.title CTitle, V.code VCode, V.title VTitle, V.id VID
-            FROM video V
-            INNER JOIN program P
-            on P.id = V.program_id
-            INNER JOIN category C
-            on C.id = P.category_id
-            ORDER BY C.title, V.id DESC) OrderedSet) SequencedSet) X
-            where X.ROWNUMBER<=2
-            ", $rsm);
-*/
-        // этот запрос в самом MySQL выполняет 2мс
-        $query = $em->createQuery(
-            'SELECT v FROM   HopeRestBundle:Episode v LEFT JOIN HopeRestBundle:Program p WITH p.id = v.program_id
-            WHERE ( SELECT COUNT(v1.id) FROM HopeRestBundle:Episode v1 LEFT JOIN HopeRestBundle:Program p1 WITH p1.id = v1.program_id WHERE p1.category_id = p.category_id AND v1.id >= v.id ) <= 2'
-        );
-
-        $topVideos = $query->getResult();
-/*      print '<pre>';
-        print_r($topVideos);
-        print '</pre>';
-        die();
-*/
         $videoList = array();
         foreach($topVideos as $key=>$video){
             $videoList[$key]['id'] = $video->getId();
@@ -132,7 +124,6 @@ class HomeController extends Controller
             $videoList[$key]['link'] = array(
                 "download" => $video->getDownload(),
                 "watch"    => $video->getWatch()
-
             );
             $programVideo = $video->getProgram();
             $videoList[$key]['program'] = $programVideo->getCode();
@@ -141,7 +132,7 @@ class HomeController extends Controller
 
         $settings['top_videos'] = $videoList;
         unset($videoList);
-
+*/
         //  Получаем список Страниц
         $settings['about']=array();
 
