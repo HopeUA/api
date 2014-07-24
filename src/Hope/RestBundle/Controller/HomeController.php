@@ -88,6 +88,8 @@ class HomeController extends Controller
         $rsm->addFieldResult('v', 'title', 'title');
 
 /*      // этот запрос в самом MySQL выполняет 4мс
+        // http://sqlfiddle.com/#!2/6ad8c6/52
+        // но в Доктрине выдает пустой результат
         $query = $em->createNativeQuery("
             SELECT VID, VTitle FROM (
             SELECT SequencedSet.*, @Rnum := if(mvcat = CTitle, @Rnum + 1, 1) RowNumber from (
@@ -121,6 +123,20 @@ class HomeController extends Controller
             $videoList[$key]['id'] = $video->getId();
             $videoList[$key]['code'] = $video->getCode();
             $videoList[$key]['title'] = $video->getTitle();
+            $videoList[$key]['descr'] = $video->getDescription();
+            $videoList[$key]['author'] = $video->getAuthor();
+            $videoList[$key]['duration'] = $video->getDuration();
+            $videoList[$key]['publish_time'] = $video->getPublishTime();
+            $videoList[$key]['hd'] = $video->getHd();
+            $videoList[$key]['image'] = $video->getImage();
+            $videoList[$key]['link'] = array(
+                "download" => $video->getDownload(),
+                "watch"    => $video->getWatch()
+
+            );
+            $programVideo = $video->getProgram();
+            $videoList[$key]['program'] = $programVideo->getCode();
+
         }
 
         $settings['top_videos'] = $videoList;
