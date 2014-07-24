@@ -2,6 +2,13 @@ hope_rest_home:
     path:     /v1/home.json
     defaults: { _controller: HopeRestBundle:Home:index}
 
+hope_rest_video:
+    path:     /v1/video.json
+    defaults: { _controller: HopeRestBundle:Video:index}
+
+hope_rest_timetable:
+    path:     /v1/timetable.json
+    defaults: { _controller: HopeRestBundle:TimeTable:index}
 
 
 

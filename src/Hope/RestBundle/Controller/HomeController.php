@@ -6,8 +6,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Yaml\Parser;
-use Doctrine\ORM\Query\ResultSetMapping;
-use Doctrine\ORM\EntityRepository;
+//use Doctrine\ORM\Query\ResultSetMapping;
+//use Doctrine\ORM\EntityRepository;
 
 class HomeController extends Controller
 {
