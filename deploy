@@ -1,0 +1,14 @@
+#!/bin/bash
+
+BASEDIR=$(dirname $0)
+cd $BASEDIR
+
+chmod 777 app/cache
+chmod 777 app/logs
+
+composer install --optimize-autoloader
+
+php app/console cache:clear --env=prod --no-debug
+php app/console doctrine:schema:update --force
+#php app/console assetic:dump --env=prod --no-debug
+
