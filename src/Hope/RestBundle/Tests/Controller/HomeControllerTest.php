@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 class HomeControllerTest extends RestTestCase
 {
     /**
-     * @medium
+     * @large
      */
     public function testRequest()
     {
@@ -24,29 +24,18 @@ class HomeControllerTest extends RestTestCase
         $data = json_decode($response);
         $this->assertInstanceOf('stdClass', $data);
 
-        // Test Banners
-        $this->assertObjectHasAttribute('banners', $data);
-        $this->checkBanners($data->banners);
-
-        // Test Live
-        $this->assertObjectHasAttribute('live', $data);
-        $this->checkLive($data->live);
-
-        // Test Categories
-        $this->assertObjectHasAttribute('categories', $data);
-        $this->checkCategories($data->categories);
-
-        // Test Top Videos
-        $this->objectHasAttribute('top_videos', $data);
-        $this->checkVideos($data->top_videos);
-
-        // Test Static Pages
-        $this->objectHasAttribute('about', $data);
-        $this->checkAbout($data->about);
+        return $data;
     }
 
-    private function checkBanners($banners)
+    /**
+     * @large
+     * @depends testRequest
+     */
+    public function testBanners($data)
     {
+        $this->assertObjectHasAttribute('banners', $data);
+        $banners = $data->banners;
+
         $this->assertInternalType('array', $banners);
 
         if (count($banners)) {
@@ -60,15 +49,29 @@ class HomeControllerTest extends RestTestCase
         }
     }
 
-    private function checkLive($live)
+    /**
+     * @large
+     * @depends testRequest
+     */
+    public function testLive($data)
     {
+        $this->assertObjectHasAttribute('live', $data);
+        $live = $data->live;
+
         $this->assertInstanceOf('stdClass', $live);
         $this->assertObjectHasAttribute('stream', $live);
         $this->assertNotEmpty($live->stream);
     }
 
-    private function checkCategories($categories)
+    /**
+     * @large
+     * @depends testRequest
+     */
+    public function testCategories($data)
     {
+        $this->assertObjectHasAttribute('categories', $data);
+        $categories = $data->categories;
+
         $this->assertInternalType('array', $categories);
         $this->assertGreaterThan(0, count($categories));
 
@@ -81,10 +84,14 @@ class HomeControllerTest extends RestTestCase
         $this->assertNotEmpty($cat->title);
 
         $this->assertObjectHasAttribute('programs', $cat);
-        $this->checkPrograms($cat->programs);
+        return $cat->programs;
     }
 
-    private function checkPrograms($programs)
+    /**
+     * @large
+     * @depends testCategories
+     */
+    public function testPrograms($programs)
     {
         $this->assertInternalType('array', $programs);
         if (count($programs)) {
@@ -106,8 +113,15 @@ class HomeControllerTest extends RestTestCase
         }
     }
 
-    private function checkVideos($videos)
+    /**
+     * @large
+     * @depends testRequest
+     */
+    public function testVideos($data)
     {
+        $this->objectHasAttribute('top_videos', $data);
+        $videos = $data->top_videos;
+
         $this->assertInternalType('array', $videos);
         $this->assertGreaterThan(0, count($videos));
 
@@ -153,8 +167,15 @@ class HomeControllerTest extends RestTestCase
         $this->assertAttributeNotEmpty('watch', $link);
     }
 
-    private function checkAbout($about)
+    /**
+     * @large
+     * @depends testRequest
+     */
+    public function testAbout($data)
     {
+        $this->objectHasAttribute('about', $data);
+        $about = $data->about;
+
         $this->assertInternalType('array', $about);
         $this->assertEquals(3, count($about));
 
