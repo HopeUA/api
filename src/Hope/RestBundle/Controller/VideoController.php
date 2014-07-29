@@ -56,10 +56,11 @@ class VideoController extends Controller
 
 
         }
-        $jsonVideos = json_encode($videoList);
+        $jsonVideos = json_encode($videoList, JSON_UNESCAPED_UNICODE);
 
         if(empty($videos)){
-            throw $this->createNotFoundException($jsonVideos);
+            $response = new Response($jsonVideos, 404);
+            //$response->headers->set('Content-Type', 'application/json');
 
         }else{
             $response = new Response($jsonVideos);
