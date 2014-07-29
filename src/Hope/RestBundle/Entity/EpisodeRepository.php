@@ -52,9 +52,6 @@ class EpisodeRepository extends EntityRepository
 
         }
 
-        if(empty($params['limit'])){
-            $params['limit'] = '0|10';
-        }
         $limit              = explode('|',$params['limit']);
         $offset             = $limit[0]; // начинаем считывать с N записи
         $quantity           = $limit[1]; // количество выбираемых записей
@@ -62,15 +59,6 @@ class EpisodeRepository extends EntityRepository
         $query->orderBy('e.publish_time', 'DESC');
         $query->setMaxResults($quantity);
         $query->setFirstResult($offset);
-
-        //$qqq    = $query->getQuery();
-        //$qParam = $qqq->getParameters();
-
-        /*if(!empty($qParam)){
-            $results = $query->getQuery()->getResult();
-        }else{
-            $results = '';
-        }*/
 
         $results = $query->getQuery()->getResult();
         return $results;
