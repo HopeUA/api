@@ -20,7 +20,6 @@ class HomeControllerTest extends RestTestCase
     public function testRequest()
     {
         $client = static::createClient();
-
         $client->request('GET', '/v1/home.json');
 
         $this->assertEquals(
@@ -248,6 +247,7 @@ class HomeControllerTest extends RestTestCase
 
         $this->assertObjectHasAttribute('link', $video);
 
+        // Link obj
         $link = $video->link;
         $this->assertInstanceOf('stdClass', $link);
         $this->assertObjectHasAttribute('download', $link);
