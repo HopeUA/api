@@ -7,7 +7,15 @@ use Symfony\Component\HttpFoundation\Response;
 class HomeControllerTest extends RestTestCase
 {
     /**
+     * API V1
+     * /home.json
      * @large
+     *
+     * @code
+     *
+     *
+     *
+     *
      */
     public function testRequest()
     {
@@ -28,6 +36,20 @@ class HomeControllerTest extends RestTestCase
     }
 
     /**
+     * API V1
+     *
+     * @code
+     * {
+     *   banners: {
+     *     [
+     *       {
+     *         image: "{url}",
+     *         url: "{url}"
+     *       }
+     *     ]
+     *   }
+     * }
+     *
      * @large
      * @depends testRequest
      */
@@ -50,6 +72,17 @@ class HomeControllerTest extends RestTestCase
     }
 
     /**
+     * API V1
+     *
+     * @code
+     * {
+     *   live: {
+     *     {
+     *       stream: "{url}"
+     *     }
+     *   }
+     * }
+     *
      * @large
      * @depends testRequest
      */
@@ -64,6 +97,21 @@ class HomeControllerTest extends RestTestCase
     }
 
     /**
+     * API V1
+     *
+     * @code
+     * {
+     *   categories: {
+     *     [
+     *       {
+     *          "id": {int},
+     *          "title": "{string}",
+     *          "programs": []
+     *       }
+     *     ]
+     *   }
+     * }
+     *
      * @large
      * @depends testRequest
      */
@@ -88,6 +136,22 @@ class HomeControllerTest extends RestTestCase
     }
 
     /**
+     * API V1
+     *
+     * @code
+     * {
+     *   programs: {
+     *     [
+     *       {
+     *          "code": "{string}",
+     *          "title": "{string}",
+     *          "desc_short": "{string}",
+     *          "desc_full": "{string}"
+     *       }
+     *     ]
+     *   }
+     * }
+     *
      * @large
      * @depends testCategories
      */
@@ -114,6 +178,31 @@ class HomeControllerTest extends RestTestCase
     }
 
     /**
+     * API V1
+     *
+     * @code
+     * {
+     *   top_videos: {
+     *     [
+     *       {
+     *          "code": "{string}",
+     *          "title": "{string}",
+     *          "desc": "{string}",
+     *          "author": "{string}",
+     *          "program": "{string}",
+     *          "duration": {int},
+     *          "publish_time": "{datetime}",
+     *          "hd": {bool},
+     *          "image": "{url}",
+     *          "link": {
+     *            "download": "{url}",
+     *            "watch": "{url}"
+     *          }
+     *       }
+     *     ]
+     *   }
+     * }
+     *
      * @large
      * @depends testRequest
      */
@@ -168,6 +257,21 @@ class HomeControllerTest extends RestTestCase
     }
 
     /**
+     * API V1
+     *
+     * @code
+     * {
+     *   about: {
+     *     [
+     *       {
+     *          "section": "{string}",
+     *          "title": "{string}",
+     *          "text": "{string}",
+     *       }
+     *     ]
+     *   }
+     * }
+     *
      * @large
      * @depends testRequest
      */
