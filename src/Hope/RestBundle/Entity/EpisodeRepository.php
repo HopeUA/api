@@ -26,10 +26,11 @@ class EpisodeRepository extends EntityRepository
             $em = $this->getEntityManager()
                 ->getRepository('HopeRestBundle:Program')
                 ->findByCode($params['program_code']);
-            $programId = $em[0]->getId();
-
-            $query->andWhere('e.program_id = :program_id');
-            $query->setParameter('program_id', $programId);
+            if(!empty($em)){
+                $programId = $em[0]->getId();
+                $query->andWhere('e.program_id = :program_id');
+                $query->setParameter('program_id', $programId);
+            }
         }
 
         //код категории
@@ -51,29 +52,34 @@ class EpisodeRepository extends EntityRepository
 
         }
 
-
         if(empty($params['limit'])){
             $params['limit'] = '0|10';
         }
         $limit              = explode('|',$params['limit']);
-        $offset             = $limit[0];
-        $quantity           = $limit[1];
+        $offset             = $limit[0]; // начинаем считывать с N записи
+        $quantity           = $limit[1]; // количество выбираемых записей
 
+        $query->orderBy('e.publish_time', 'DESC');
         $query->setMaxResults($quantity);
         $query->setFirstResult($offset);
-        $results = $query->getQuery()->getResult();
-/*
-        $qqq = $query->getQuery();
-        print '<pre>';
+
+        $qqq    = $query->getQuery();
+        $qParam = $qqq->getParameters();
+
+        /*print '<pre>';
         print_r(array(
             'sql'        => $qqq->getSQL(),
-            'dql'=> $qqq->getDql(),
+            'dql'        => $qqq->getDql(),
             'parameters' => $qqq->getParameters(),
         ));
         print '</pre>';
-        die();
-*/
+        die();*/
 
+        if(!empty($qParam['_elements'])){
+            $results = $query->getQuery()->getResult();
+        }else{
+            $results = '';
+        }
         return $results;
     }
 } 

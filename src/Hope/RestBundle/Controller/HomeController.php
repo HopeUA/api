@@ -85,10 +85,10 @@ class HomeController extends Controller
                     $categoriesList[$key]['videos'][$vid]['duration'] = $video->getDuration();
                     $categoriesList[$key]['videos'][$vid]['publish_time'] = $video->getPublishTime();
                     $categoriesList[$key]['videos'][$vid]['hd'] = $video->getHd();
-                    $categoriesList[$key]['videos'][$vid]['image'] = $video->getImage();
+                    $categoriesList[$key]['videos'][$vid]['image'] = "http://share.yourhope.tv/".$video->getCode().'.jpg';
                     $categoriesList[$key]['videos'][$vid]['link'] = array(
-                        "download" => $video->getDownload(),
-                        "watch"    => $video->getWatch()
+                        "download" => "http://share.yourhope.tv/".$video->getCode().'.mov',
+                        "watch"    => "https://www.youtube.com/watch?v=".$video->getWatch()
                     );
                     $programVideo = $video->getProgram();
                     $categoriesList[$key]['videos'][$vid]['program'] = $programVideo->getCode();

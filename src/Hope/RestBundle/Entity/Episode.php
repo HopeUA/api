@@ -67,16 +67,6 @@ class Episode {
         protected $hd;
 
         /**
-         * @ORM\Column(type="string", length=200)
-         */
-        protected $image;
-
-        /**
-         * @ORM\Column(type="string", length=255)
-         */
-        protected $download;
-
-        /**
          * @ORM\Column(type="string", length=255)
          */
         protected $watch;
@@ -286,52 +276,6 @@ class Episode {
     public function getHd()
     {
         return $this->hd;
-    }
-
-    /**
-     * Set image
-     *
-     * @param string $image
-     * @return Episode
-     */
-    public function setImage($image)
-    {
-        $this->image = $image;
-
-        return $this;
-    }
-
-    /**
-     * Get image
-     *
-     * @return string 
-     */
-    public function getImage()
-    {
-        return $this->image;
-    }
-
-    /**
-     * Set download
-     *
-     * @param string $download
-     * @return Episode
-     */
-    public function setDownload($download)
-    {
-        $this->download = $download;
-
-        return $this;
-    }
-
-    /**
-     * Get download
-     *
-     * @return string 
-     */
-    public function getDownload()
-    {
-        return $this->download;
     }
 
     /**

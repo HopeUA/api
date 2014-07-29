@@ -150,9 +150,9 @@ class ImportCommand extends ContainerAwareCommand
                 $videoEntity->setPublishTime($dateEntity);
 
                 $videoEntity->setHd($video['v_wide']);
-                $videoEntity->setImage('http://share.yourhope.tv/'.$video['v_serial'].'.jpg');
-                $videoEntity->setDownload('http://share.yourhope.tv/'.$video['v_serial'].'.mov');
-                $videoEntity->setWatch('https://www.youtube.com/watch?v='.$video['youtube']);
+                //$videoEntity->setImage('http://share.yourhope.tv/'.$video['v_serial'].'.jpg');
+                //$videoEntity->setDownload('http://share.yourhope.tv/'.$video['v_serial'].'.mov');
+                $videoEntity->setWatch($video['youtube']);
 
                 $em->persist($videoEntity);
             }
