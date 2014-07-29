@@ -43,7 +43,7 @@ class TimeTableController extends Controller
             $issueList[$key]['episode']  = $issue->getEpisode();
         }
 
-        $jsonIssues = json_encode($issueList);
+        $jsonIssues = json_encode($issueList, JSON_UNESCAPED_UNICODE);
 
         $response = new Response($jsonIssues);
         $response->headers->set('Content-Type', 'application/json');

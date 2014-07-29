@@ -5,7 +5,8 @@ namespace Hope\RestBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class VideoController extends Controller
 {
@@ -16,17 +17,34 @@ class VideoController extends Controller
 
         // Получаем GET переменные
         // код программы
-        $params['program_code']       = $request->get('program_code');
-        $params['program_category']   = $request->get('program_category');
-        $params['code']               = $request->get('code');
-        $params['text']               = $request->get('text');
-        $params['sort']               = $request->get('sort');
-        $params['limit']              = $request->get('limit');
+        if($request->get('program_code')!=''){
+            $params['program_code']       = $request->get('program_code');
+        }
+        if($request->get('program_category')) {
+            $params['program_category']   = $request->get('program_category');
+        }
+        if($request->get('code')) {
+            $params['code']               = $request->get('code');
+        }
+        if($request->get('text')){
+            $params['text']               = $request->get('text');
+        }
+        if($request->get('sort')){
+            $params['sort']               = $request->get('sort');
+        }
+        if($request->get('limit')){
+            $params['limit']              = $request->get('limit');
+        }
 
-        $em = $this->getDoctrine()->getManager();
-        $videos = $em->getRepository('HopeRestBundle:Episode')
-            ->getByParams($params);
+        $resolver = new OptionsResolver();
+        $this->configureOptions($resolver);
+        $this->options = $resolver->resolve($params);
 
+        if(count($this->options)>1){
+            $em = $this->getDoctrine()->getManager();
+            $videos = $em->getRepository('HopeRestBundle:Episode')
+                ->getByParams($this->options);
+        }
         //обработка полученных видео объектов
         if(!empty($videos)){
             $videoList = array();
@@ -56,10 +74,11 @@ class VideoController extends Controller
 
 
         }
-        $jsonVideos = json_encode($videoList);
+        $jsonVideos = json_encode($videoList, JSON_UNESCAPED_UNICODE);
 
-        if(empty($videos)){
-            throw $this->createNotFoundException($jsonVideos);
+        if(empty($videoList)){
+            $response = new Response($jsonVideos, 404);
+            $response->headers->set('Content-Type', 'application/json');
 
         }else{
             $response = new Response($jsonVideos);
@@ -67,6 +86,22 @@ class VideoController extends Controller
         }
 
         return $response;
+
+    }
+
+    protected function configureOptions(OptionsResolverInterface $resolver)
+    {
+        $resolver->setDefaults(array(
+            'limit' => '0|10'
+        ));
+
+        $resolver->setOptional(array('program_code'));
+        $resolver->setOptional(array('program_category'));
+        $resolver->setOptional(array('code'));
+        $resolver->setOptional(array('text'));
+        $resolver->setOptional(array('sort'));
+        $resolver->setOptional(array('limit'));
+
 
     }
 

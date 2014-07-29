@@ -74,7 +74,7 @@ class HomeController extends Controller
                 $categoriesList[$key]['programs'][$keyProgr]['desc_full']  = $program->getDescFull();
 
                 $videos = $program->getVideos();
-                //$videoList = array();
+
                 foreach($videos as $keyVideo => $video){
                     $vid = $video->getId();
                     $categoriesList[$key]['videos'][$vid]['id'] = $vid;
@@ -94,7 +94,7 @@ class HomeController extends Controller
                     $categoriesList[$key]['videos'][$vid]['program'] = $programVideo->getCode();
                 }
             }
-            //krsort($categoriesList[$key]['videos']);
+
             $videoList[$key][] = end($categoriesList[$key]['videos']);
             $videoList[$key][] = prev($categoriesList[$key]['videos']);
             unset($categoriesList[$key]['videos']);
@@ -106,33 +106,8 @@ class HomeController extends Controller
         unset($categoriesList);
 
         //  Получаем список Top Videos
-
         $settings['top_videos'] = $videoList;
-/*
-        $em = $this->getDoctrine()->getManager();
-        $videoList = array();
-        foreach($topVideos as $key=>$video){
-            $videoList[$key]['id'] = $video->getId();
-            $videoList[$key]['code'] = $video->getCode();
-            $videoList[$key]['title'] = $video->getTitle();
-            $videoList[$key]['descr'] = $video->getDescription();
-            $videoList[$key]['author'] = $video->getAuthor();
-            $videoList[$key]['duration'] = $video->getDuration();
-            $videoList[$key]['publish_time'] = $video->getPublishTime();
-            $videoList[$key]['hd'] = $video->getHd();
-            $videoList[$key]['image'] = $video->getImage();
-            $videoList[$key]['link'] = array(
-                "download" => $video->getDownload(),
-                "watch"    => $video->getWatch()
-            );
-            $programVideo = $video->getProgram();
-            $videoList[$key]['program'] = $programVideo->getCode();
 
-        }
-
-        $settings['top_videos'] = $videoList;
-        unset($videoList);
-*/
         //  Получаем список Страниц
         $settings['about']=array();
 
@@ -151,11 +126,17 @@ class HomeController extends Controller
         unset($pageList);
 
         // формат JSON
-        $settingsJSON = json_encode($settings);
+        $settingsJSON = json_encode($settings, JSON_UNESCAPED_UNICODE);
 
-        // вывод
-        $response = new Response($settingsJSON);
-        $response->headers->set('Content-Type', 'application/json');
+        if(empty($settings)){
+            $response = new Response($settingsJSON, 404);
+            $response->headers->set('Content-Type', 'application/json');
+
+        }else{
+            $response = new Response($settingsJSON);
+            $response->headers->set('Content-Type', 'application/json');
+        }
+
         return $response;
     }
 
