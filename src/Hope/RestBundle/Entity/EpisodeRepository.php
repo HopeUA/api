@@ -63,14 +63,16 @@ class EpisodeRepository extends EntityRepository
         $query->setMaxResults($quantity);
         $query->setFirstResult($offset);
 
-        $qqq    = $query->getQuery();
-        $qParam = $qqq->getParameters();
+        //$qqq    = $query->getQuery();
+        //$qParam = $qqq->getParameters();
 
-        if(!empty($qParam['_elements'])){
+        /*if(!empty($qParam)){
             $results = $query->getQuery()->getResult();
         }else{
             $results = '';
-        }
+        }*/
+
+        $results = $query->getQuery()->getResult();
         return $results;
     }
 } 

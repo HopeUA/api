@@ -128,9 +128,15 @@ class HomeController extends Controller
         // формат JSON
         $settingsJSON = json_encode($settings, JSON_UNESCAPED_UNICODE);
 
-        // вывод
-        $response = new Response($settingsJSON);
-        $response->headers->set('Content-Type', 'application/json');
+        if(empty($settings)){
+            $response = new Response($settingsJSON, 404);
+            $response->headers->set('Content-Type', 'application/json');
+
+        }else{
+            $response = new Response($settingsJSON);
+            $response->headers->set('Content-Type', 'application/json');
+        }
+
         return $response;
     }
 
