@@ -22,20 +22,17 @@ class EpisodeRepository extends EntityRepository
 
         //код программы
         if(!empty($params['program_code'])){
+                $query->leftjoin('HopeRestBundle:Program', 'p', 'WITH', 'e.program_id = p.id');
+                $query->andWhere('p.code = :pcode');
+                $query->setParameter('pcode', $params['program_code']);
 
-            $em = $this->getEntityManager()
-                ->getRepository('HopeRestBundle:Program')
-                ->findByCode($params['program_code']);
-            if(!empty($em)){
-                $programId = $em[0]->getId();
-                $query->andWhere('e.program_id = :program_id');
-                $query->setParameter('program_id', $programId);
-            }
         }
 
         //код категории
         if(!empty($params['program_category'])) {
-            $query->leftjoin('HopeRestBundle:Program', 'p', 'WITH', 'e.program_id = p.id');
+            if(empty($params['program_code'])){
+                $query->leftjoin('HopeRestBundle:Program', 'p', 'WITH', 'e.program_id = p.id');
+            }
             $query->andWhere('p.category_id = :category');
             $query->setParameter('category',$params['program_category']);
         }
@@ -60,6 +57,16 @@ class EpisodeRepository extends EntityRepository
         $query->setMaxResults($quantity);
         $query->setFirstResult($offset);
 
+        /*$qqq    = $query->getQuery();
+        print '<pre>';
+                print_r(array(
+                    'sql'        => $qqq->getSQL(),
+                    'dql'        => $qqq->getDql(),
+                    'parameters' => $qqq->getParameters(),
+                ));
+                print '</pre>';
+                die();
+        */
         $results = $query->getQuery()->getResult();
         return $results;
     }

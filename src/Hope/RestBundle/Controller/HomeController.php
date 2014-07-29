@@ -130,11 +130,11 @@ class HomeController extends Controller
 
         if(empty($settings)){
             $response = new Response($settingsJSON, 404);
-            $response->headers->set('Content-Type', 'application/json');
+            $response->headers->set('Content-Type', 'application/json; charset=utf8');
 
         }else{
             $response = new Response($settingsJSON);
-            $response->headers->set('Content-Type', 'application/json');
+            $response->headers->set('Content-Type', 'application/json; charset=utf8');
         }
 
         return $response;

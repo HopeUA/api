@@ -78,11 +78,11 @@ class VideoController extends Controller
 
         if(empty($videoList)){
             $response = new Response($jsonVideos, 404);
-            $response->headers->set('Content-Type', 'application/json');
+            $response->headers->set('Content-Type', 'application/json; charset=utf8');
 
         }else{
             $response = new Response($jsonVideos);
-            $response->headers->set('Content-Type', 'application/json');
+            $response->headers->set('Content-Type', 'application/json; charset=utf8');
         }
 
         return $response;
