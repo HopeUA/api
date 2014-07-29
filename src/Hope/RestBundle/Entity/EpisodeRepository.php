@@ -66,15 +66,6 @@ class EpisodeRepository extends EntityRepository
         $qqq    = $query->getQuery();
         $qParam = $qqq->getParameters();
 
-        /*print '<pre>';
-        print_r(array(
-            'sql'        => $qqq->getSQL(),
-            'dql'        => $qqq->getDql(),
-            'parameters' => $qqq->getParameters(),
-        ));
-        print '</pre>';
-        die();*/
-
         if(!empty($qParam['_elements'])){
             $results = $query->getQuery()->getResult();
         }else{
