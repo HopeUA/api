@@ -214,6 +214,7 @@ class HomeControllerTest extends RestTestCase
         $this->assertGreaterThan(0, count($videos));
 
         $video = $videos[array_rand($videos)];
+
         $this->assertInstanceOf('stdClass', $video);
 
         $attrs = [
@@ -243,13 +244,15 @@ class HomeControllerTest extends RestTestCase
                 'required' => true
             ],
         ];
-        $this->checkAttributes($video, $attrs);
 
+        $this->checkAttributes($video, $attrs);
         $this->assertObjectHasAttribute('link', $video);
 
         // Link obj
         $link = $video->link;
+
         $this->assertInstanceOf('stdClass', $link);
+
         $this->assertObjectHasAttribute('download', $link);
         $this->assertAttributeNotEmpty('download', $link);
         $this->assertObjectHasAttribute('watch', $link);
@@ -289,7 +292,7 @@ class HomeControllerTest extends RestTestCase
             $attrs = [
                 'section' => [
                     'required' => true,
-                    'regex'    => '^a-z+$',
+                    'regex'    => '^[a-z]+$',
                 ],
                 'title'   => [
                     'required' => true,

@@ -47,40 +47,47 @@ class VideoController extends Controller
         }
         //обработка полученных видео объектов
         if(!empty($videos)){
+
             $videoList = array();
-            foreach($videos as $video){
+            foreach($videos as $key=>$video){
                 $vid = $video->getId();
-                $videoList[$vid]['id'] = $vid;
-                $videoList[$vid]['code'] = $video->getCode();
-                $videoList[$vid]['title'] = $video->getTitle();
-                $videoList[$vid]['descr'] = $video->getDescription();
-                $videoList[$vid]['author'] = $video->getAuthor();
-                $videoList[$vid]['duration'] = $video->getDuration();
-                $videoList[$vid]['publish_time'] = $video->getPublishTime()->format( 'Y-m-d H:i:s' );
-                $videoList[$vid]['hd'] = $video->getHd();
-                $videoList[$vid]['image'] = 'http://share.yourhope.tv/'.$video->getCode().'.jpg';
-                $videoList[$vid]['link'] = array(
+                $videoList[$key]['id'] = $vid;
+                $videoList[$key]['code'] = $video->getCode();
+                $videoList[$key]['title'] = $video->getTitle();
+                $videoList[$key]['desc'] = $video->getDescription();
+                $videoList[$key]['author'] = $video->getAuthor();
+                $videoList[$key]['duration'] = $video->getDuration();
+                $videoList[$key]['publish_time'] = $video->getPublishTime()->format( 'Y-m-d H:i:s' );
+                $videoList[$key]['hd'] = $video->getHd();
+                $videoList[$key]['image'] = 'http://share.yourhope.tv/'.$video->getCode().'.jpg';
+                $videoList[$key]['link'] = array(
                     "download" => 'http://share.yourhope.tv/'.$video->getCode().'.mov',
                     "watch"    => $video->getWatch()
                 );
                 $programVideo = $video->getProgram();
-                $videoList[$vid]['program'] = $programVideo->getCode();
+                $videoList[$key]['program'] = $programVideo->getCode();
+
+
             }
+
+
         }else{
-            $videoList = array(
+            $videoListError = array(
                 'error' => true,
                 'message' => "Ошибка"
             );
 
 
         }
-        $jsonVideos = json_encode($videoList, JSON_UNESCAPED_UNICODE);
+
 
         if(empty($videoList)){
+            $jsonVideos = json_encode($videoListError, JSON_UNESCAPED_UNICODE);
             $response = new Response($jsonVideos, 404);
             $response->headers->set('Content-Type', 'application/json; charset=utf8');
 
         }else{
+            $jsonVideos = json_encode($videoList, JSON_UNESCAPED_UNICODE);
             $response = new Response($jsonVideos);
             $response->headers->set('Content-Type', 'application/json; charset=utf8');
         }

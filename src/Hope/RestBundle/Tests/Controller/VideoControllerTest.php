@@ -75,10 +75,10 @@ class VideoControllerTest extends RestTestCase
     public function testByCode($code, $exists)
     {
         $client = static::createClient();
-
         $params   = ['code' => $code];
         $expected = $exists ? 1 : 0;
         $this->checkEpisode($params, $expected, $client);
+
     }
 
     public function programCodeProvider()
@@ -121,7 +121,6 @@ class VideoControllerTest extends RestTestCase
     protected function checkEpisode($params, $expected, Client $client)
     {
         $client->request('GET', $this->url, $params);
-
         if ($expected) {
             $this->assertEquals(
                 Response::HTTP_OK,
@@ -132,9 +131,12 @@ class VideoControllerTest extends RestTestCase
 
             $data = json_decode($response);
             $this->assertInternalType('array', $data);
+
             $this->assertEquals($expected, count($data));
 
+
             $episode = $data[0];
+
             $this->checkAttributes($episode, $this->episodeAttrs);
 
             $this->assertObjectHasAttribute('link', $episode);
@@ -157,7 +159,6 @@ class VideoControllerTest extends RestTestCase
 
             $data = json_decode($response);
             $this->assertInstanceOf('stdClass', $data);
-
             $this->checkAttributes($data, $this->notFoundAttrs);
         }
     }

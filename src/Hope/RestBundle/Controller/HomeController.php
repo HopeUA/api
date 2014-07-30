@@ -6,8 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Yaml\Parser;
-//use Doctrine\ORM\Query\ResultSetMapping;
-//use Doctrine\ORM\EntityRepository;
+
 
 class HomeController extends Controller
 {
@@ -45,7 +44,7 @@ class HomeController extends Controller
         }
 
         foreach($liveStreams as $stream){
-            $settings['live'][] = $stream;
+            $settings['live'] = $stream;
         }
 
         //  Получаем список всех категорий
@@ -59,7 +58,7 @@ class HomeController extends Controller
             );
 
         $categoriesList = array();
-
+        $videoList = array();
         foreach($categories as $key => $obj){
             $categoriesList[$key]['id']       = $obj->getId();
             $categoriesList[$key]['title']    = $obj->getTitle();
@@ -80,10 +79,10 @@ class HomeController extends Controller
                     $categoriesList[$key]['videos'][$vid]['id'] = $vid;
                     $categoriesList[$key]['videos'][$vid]['code'] = $video->getCode();
                     $categoriesList[$key]['videos'][$vid]['title'] = $video->getTitle();
-                    $categoriesList[$key]['videos'][$vid]['descr'] = $video->getDescription();
+                    $categoriesList[$key]['videos'][$vid]['desc'] = $video->getDescription();
                     $categoriesList[$key]['videos'][$vid]['author'] = $video->getAuthor();
                     $categoriesList[$key]['videos'][$vid]['duration'] = $video->getDuration();
-                    $categoriesList[$key]['videos'][$vid]['publish_time'] = $video->getPublishTime();
+                    $categoriesList[$key]['videos'][$vid]['publish_time'] = $video->getPublishTime()->format( 'Y-m-d H:i:s' );
                     $categoriesList[$key]['videos'][$vid]['hd'] = $video->getHd();
                     $categoriesList[$key]['videos'][$vid]['image'] = "http://share.yourhope.tv/".$video->getCode().'.jpg';
                     $categoriesList[$key]['videos'][$vid]['link'] = array(
@@ -95,8 +94,8 @@ class HomeController extends Controller
                 }
             }
 
-            $videoList[$key][] = end($categoriesList[$key]['videos']);
-            $videoList[$key][] = prev($categoriesList[$key]['videos']);
+            $videoList[] = end($categoriesList[$key]['videos']);
+            $videoList[] = prev($categoriesList[$key]['videos']);
             unset($categoriesList[$key]['videos']);
 
 
@@ -107,6 +106,8 @@ class HomeController extends Controller
 
         //  Получаем список Top Videos
         $settings['top_videos'] = $videoList;
+        //print_r($videoList);
+        //die();
 
         //  Получаем список Страниц
         $settings['about']=array();
