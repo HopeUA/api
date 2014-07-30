@@ -9,13 +9,8 @@ class HomeControllerTest extends RestTestCase
     /**
      * API V1
      * /home.json
+     *
      * @large
-     *
-     * @code
-     *
-     *
-     *
-     *
      */
     public function testRequest()
     {
