@@ -33,7 +33,7 @@ class HopeSchedule {
     protected $ptime;
 
     /**
-     * @ORM\Column(type="time")
+     * @ORM\Column(type="string", length=8)
      */
     protected $duration;
 
@@ -52,7 +52,18 @@ class HopeSchedule {
      */
     protected $session;
 
+    /**
+     * Set id
+     *
+     * @param integer $id
+     * @return HopeSchedule
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
 
+        return $this;
+    }
     /**
      * Get id
      *
@@ -135,7 +146,7 @@ class HopeSchedule {
     /**
      * Set duration
      *
-     * @param \DateTime $duration
+     * @param string $duration
      * @return HopeSchedule
      */
     public function setDuration($duration)
@@ -148,7 +159,7 @@ class HopeSchedule {
     /**
      * Get duration
      *
-     * @return \DateTime 
+     * @return string
      */
     public function getDuration()
     {

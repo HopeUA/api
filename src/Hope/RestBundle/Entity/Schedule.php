@@ -34,8 +34,18 @@ class Schedule {
      */
     protected $episode;
 
+    /**
+     * Set id
+     *
+     * @param integer $id
+     * @return Schedule
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
 
-
+        return $this;
+    }
     /**
      * Get id
      *

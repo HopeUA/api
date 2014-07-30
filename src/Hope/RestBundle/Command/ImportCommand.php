@@ -1,6 +1,8 @@
 <?php
 namespace Hope\RestBundle\Command;
 
+use Hope\RestBundle\Entity\Import\HopeSchedule;
+use Hope\RestBundle\Entity\Schedule;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -24,11 +26,12 @@ class ImportCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        //$entityManager = $this->getContainer()->get('doctrine')->getEntityManager();
+
         $doctrine = $this->getContainer()->get('doctrine');
         $em = $doctrine->getManager();
 
         $output->writeln('DB Connected.');
+        $output->writeln('');
 
         $output->writeln('Category Read Started.');
 
@@ -44,8 +47,6 @@ class ImportCommand extends ContainerAwareCommand
             $categoryList[$key]['c_name']  = $obj->getCName();
             $categoryList[$key]['c_order'] = $obj->getCOrder();
         }
-
-        $output->writeln('Category Import Started');
 
         //записываем категории
         foreach($categoryList as $category){
@@ -75,9 +76,6 @@ class ImportCommand extends ContainerAwareCommand
             $programList[$key]['cat_desc']      = $obj->getCatDesc();
             $programList[$key]['cat_category']  = $obj->getCatCategory();
         }
-
-
-        $output->writeln('Program Import Started');
 
         //записываем программы
         foreach($programList as $program){
@@ -150,19 +148,62 @@ class ImportCommand extends ContainerAwareCommand
                 $videoEntity->setPublishTime($dateEntity);
 
                 $videoEntity->setHd($video['v_wide']);
-                //$videoEntity->setImage('http://share.yourhope.tv/'.$video['v_serial'].'.jpg');
-                //$videoEntity->setDownload('http://share.yourhope.tv/'.$video['v_serial'].'.mov');
                 $videoEntity->setWatch($video['youtube']);
 
                 $em->persist($videoEntity);
             }
-            $em->flush();
 
+            $em->flush();
             $offset += 100;
         }
 
+        $output->writeln('');
+        $output->writeln('Schedule Read Started');
 
-        $output->writeln('Video Finished');
+        //читаем расписание
+        $offset = 0;
+
+        $ptime7days = new \DateTime('7 days ago');
+
+        $em1 = $doctrine->getManager('dbimport');
+        $qb = $em1->createQueryBuilder();
+
+        while($schedules = $qb->select('s')->from('HopeImport:HopeSchedule','s')->where('s.ptime >= :ptime')->setParameters(array('ptime' => $ptime7days->format('Y-m-d H:i:s')))
+            ->setMaxResults(1000)->setFirstResult($offset)->getQuery()->getResult()){
+            $key = 0;
+            $timeList = array();
+            foreach($schedules as $obj){
+                $timeList[$key]['id']           = $obj->getId();
+                $timeList[$key]['program']      = $obj->getProgram();
+                $timeList[$key]['series']       = $obj->getSeries();
+                $timeList[$key]['ptime']        = $obj->getPtime();
+                $timeList[$key]['duration']     = $obj->getDuration();
+                $timeList[$key]['checked_out']  = $obj->getCheckedOut();
+                $timeList[$key]['state']        = $obj->getState();
+                $timeList[$key]['session']      = $obj->getSession();
+                ++$key;
+            }
+
+            //записываем видео
+            foreach($timeList as $obj){
+                $timeEntity = new Schedule();
+
+                $timeEntity->setId($obj['id']);
+                $timeEntity->setIssueTime($obj['ptime']);
+                $timeEntity->setProgram($obj['series']);
+                $timeEntity->setEpisode($obj['program']);
+
+                $em->persist($timeEntity);
+            }
+
+            $em->flush();
+
+            $qb = $em1->createQueryBuilder();
+            $offset += 1000;
+        }
+
+
+        $output->writeln('Schedule Finished');
 
 
     }
