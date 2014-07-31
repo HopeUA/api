@@ -174,17 +174,6 @@ class Program {
         return $this->desc_full;
     }
 
-
-    /**
-     * Get category
-     *
-     *
-     */
-    public function getCategory()
-    {
-        return $this->category;
-    }
-
     /**
      * Set category_id
      *
@@ -201,12 +190,24 @@ class Program {
     /**
      * Get category_id
      *
-     * @return integer 
+     * @return integer
      */
     public function getCategoryId()
     {
         return $this->category_id;
     }
+
+    /**
+     * Get category
+     *
+     *
+     */
+    public function getCategory()
+    {
+        return $this->category;
+    }
+
+
 
     /**
      * Set category
