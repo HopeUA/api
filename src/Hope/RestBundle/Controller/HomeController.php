@@ -65,39 +65,44 @@ class HomeController extends Controller
             $categoriesList[$key]['programs'] = array();
 
             $programs = $obj->getPrograms();
+            $programsIds = array();
             foreach($programs as $keyProgr=>$program){
+                $programsIds[] = $program->getId();
                 $categoriesList[$key]['programs'][$keyProgr]['id']         = $program->getId();
                 $categoriesList[$key]['programs'][$keyProgr]['code']       = $program->getCode();
                 $categoriesList[$key]['programs'][$keyProgr]['title']      = $program->getTitle();
                 $categoriesList[$key]['programs'][$keyProgr]['desc_short'] = $program->getDescShort();
                 $categoriesList[$key]['programs'][$keyProgr]['desc_full']  = $program->getDescFull();
-
-                $videos = $program->getVideos();
-
-                foreach($videos as $keyVideo => $video){
-                    $vid = $video->getId();
-                    $categoriesList[$key]['videos'][$vid]['id'] = $vid;
-                    $categoriesList[$key]['videos'][$vid]['code'] = $video->getCode();
-                    $categoriesList[$key]['videos'][$vid]['title'] = $video->getTitle();
-                    $categoriesList[$key]['videos'][$vid]['desc'] = $video->getDescription();
-                    $categoriesList[$key]['videos'][$vid]['author'] = $video->getAuthor();
-                    $categoriesList[$key]['videos'][$vid]['duration'] = $video->getDuration();
-                    $categoriesList[$key]['videos'][$vid]['publish_time'] = $video->getPublishTime()->format( 'Y-m-d H:i:s' );
-                    $categoriesList[$key]['videos'][$vid]['hd'] = $video->getHd();
-                    $categoriesList[$key]['videos'][$vid]['image'] = "http://share.yourhope.tv/".$video->getCode().'.jpg';
-                    $categoriesList[$key]['videos'][$vid]['link'] = array(
-                        "download" => "http://share.yourhope.tv/".$video->getCode().'.mov',
-                        "watch"    => "https://www.youtube.com/watch?v=".$video->getWatch()
-                    );
-                    $programVideo = $video->getProgram();
-                    $categoriesList[$key]['videos'][$vid]['program'] = $programVideo->getCode();
-                }
             }
 
-            $videoList[] = end($categoriesList[$key]['videos']);
-            $videoList[] = prev($categoriesList[$key]['videos']);
-            unset($categoriesList[$key]['videos']);
+            //получаем видео для программ из данной категории
+            $query = $this->getDoctrine()->getManager()->createQueryBuilder();
+            $query->select('e')
+                  ->from('HopeRestBundle:Episode', 'e');
+            $query->add('where', $query->expr()->in('e.program_id', $programsIds));
+            $query->orderBy('e.publish_time', 'DESC');
+            $query->setMaxResults(2);
+            $catVideos = $query->getQuery()->getResult();
 
+            foreach($catVideos as $video){
+                $vid = $video->getId();
+                $videoList[$vid]['id'] = $vid;
+                $videoList[$vid]['cat_id'] = $obj->getId();
+                $videoList[$vid]['code'] = $video->getCode();
+                $videoList[$vid]['title'] = $video->getTitle();
+                $videoList[$vid]['desc'] = $video->getDescription();
+                $videoList[$vid]['author'] = $video->getAuthor();
+                $videoList[$vid]['duration'] = $video->getDuration();
+                $videoList[$vid]['publish_time'] = $video->getPublishTime()->format( 'Y-m-d H:i:s' );
+                $videoList[$vid]['hd'] = $video->getHd();
+                $videoList[$vid]['image'] = "http://share.yourhope.tv/".$video->getCode().'.jpg';
+                $videoList[$vid]['link'] = array(
+                    "download" => "http://share.yourhope.tv/".$video->getCode().'.mov',
+                    "watch"    => "https://www.youtube.com/watch?v=".$video->getWatch()
+                );
+                $programVideo = $video->getProgram();
+                $videoList[$vid]['program'] = $programVideo->getCode();
+            }
 
         }
 
@@ -106,8 +111,6 @@ class HomeController extends Controller
 
         //  Получаем список Top Videos
         $settings['top_videos'] = $videoList;
-        //print_r($videoList);
-        //die();
 
         //  Получаем список Страниц
         $settings['about']=array();
