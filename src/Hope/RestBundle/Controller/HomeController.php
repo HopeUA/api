@@ -59,6 +59,7 @@ class HomeController extends Controller
 
         $categoriesList = array();
         $videoList = array();
+        $topVideo  = array();
         foreach($categories as $key => $obj){
             $categoriesList[$key]['id']       = $obj->getId();
             $categoriesList[$key]['title']    = $obj->getTitle();
@@ -104,13 +105,16 @@ class HomeController extends Controller
                 $videoList[$vid]['program'] = $programVideo->getCode();
             }
 
+            $topVideo[] = $videoList[$vid];
+            unset($videoList[$vid]);
+
         }
 
         $settings['categories'] = $categoriesList;
         unset($categoriesList);
 
         //  Получаем список Top Videos
-        $settings['top_videos'] = $videoList;
+        $settings['top_videos'] = $topVideo;
 
         //  Получаем список Страниц
         $settings['about']=array();

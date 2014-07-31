@@ -30,6 +30,7 @@ class ImportCommand extends ContainerAwareCommand
         $doctrine = $this->getContainer()->get('doctrine');
         $em = $doctrine->getManager();
 
+        $time_start = $this->microtime_float();
         $output->writeln('DB Connected.');
         $output->writeln('');
 
@@ -94,6 +95,10 @@ class ImportCommand extends ContainerAwareCommand
 
         $programList = array();
         foreach($programs as $key => $obj){
+            if(mb_strlen($obj->getCatAlias())!=4) {
+                //пропускаем программу если код программы не равен 4
+                continue;
+            }
             $programList[$key]['cat_id']        = $obj->getCatId();
             $programList[$key]['cat_alias']     = $obj->getCatAlias();
             $programList[$key]['cat_name']      = $obj->getCatName();
@@ -343,11 +348,17 @@ class ImportCommand extends ContainerAwareCommand
             $qb = $em1->createQueryBuilder();
             $offset += 1000;
         }
-
+        $time_end = $this->microtime_float();
         $output->writeln('');
-        $output->writeln('Finished');
+        $output->writeln('<info>Successfully Finished in '.($time_end-$time_start).' s</info>');
 
 
+    }
+
+    protected function microtime_float()
+    {
+        list($usec, $sec) = explode(" ", microtime());
+        return ((float)$usec + (float)$sec);
     }
 
 
