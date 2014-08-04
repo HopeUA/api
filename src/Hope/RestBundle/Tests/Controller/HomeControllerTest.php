@@ -206,8 +206,8 @@ class HomeControllerTest extends RestTestCase
         $this->assertEquals(6, count($videos));
 
         $this->assertEquals($this->getEpisode('HDVU01612'), $videos[0]);
-        $this->assertEquals($this->getEpisode('SVCU00913'), $videos[4]);
-        $this->assertEquals($this->getEpisode('FBNU00312'), $videos[5]);
+        $this->assertEquals($this->getEpisode('FBNU00512'), $videos[1]);
+        $this->assertEquals($this->getEpisode('CYCU00112'), $videos[4]);
     }
 
     /**
