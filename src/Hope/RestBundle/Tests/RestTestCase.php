@@ -71,6 +71,21 @@ class RestTestCase extends WebTestCase
                 'watch'    => 'https://www.youtube.com/watch?v=youtubeHDLink',
             ],
         ];
+        $episodes['HDVU01612'] = [
+            'code'         => 'HDVU01612',
+            'title'        => 'Най-най-най',
+            'desc'         => 'Тим, хто хоче дізнатись щось най-най-най, буде цікаво послухати розповіді Добрячка Даші та Ганнусі.',
+            'author'       => 'Добрячек',
+            'program'      => 'HDVU',
+            'duration'     => 200,
+            'publish_time' => '2014-07-28 22:07:12',
+            'hd'           => true,
+            'image'        => 'http://share.yourhope.tv/HDVU01612.jpg',
+            'link'         => [
+                'download' => 'http://share.yourhope.tv/HDVU01612.mov',
+                'watch'    => 'https://www.youtube.com/watch?v=youtubeHDLink',
+            ],
+        ];
         $episodes['FBNU00312'] = [
             'code'         => 'FBNU00312',
             'title'        => 'Греховна ли красота?',
@@ -83,6 +98,51 @@ class RestTestCase extends WebTestCase
             'image'        => 'http://share.yourhope.tv/FBNU00312.jpg',
             'link'         => [
                 'download' => 'http://share.yourhope.tv/FBNU00312.mov',
+                'watch'    => 'https://www.youtube.com/watch?v=youtubeLink',
+            ],
+        ];
+        $episodes['FBNU00512'] = [
+            'code'         => 'FBNU00512',
+            'title'        => 'Жизнь в азарте',
+            'desc'         => 'Азарт присущ практически каждому. Но что делать, если он в избытке?Подскажет Модная Книга.<br /><br /><i>Гость студии: Александр Созинов</i>',
+            'author'       => 'Ведущая',
+            'program'      => 'FBNU',
+            'duration'     => 100,
+            'publish_time' => '2014-07-28 18:07:12',
+            'hd'           => false,
+            'image'        => 'http://share.yourhope.tv/FBNU00512.jpg',
+            'link'         => [
+                'download' => 'http://share.yourhope.tv/FBNU00512.mov',
+                'watch'    => 'https://www.youtube.com/watch?v=youtubeLink',
+            ],
+        ];
+        $episodes['SVCU00913'] = [
+            'code'         => 'SVCU00913',
+            'title'        => 'Рай в шалаше',
+            'desc'         => 'Правдиво ли выражение: «С милым рай и в шалаше»? Как превратить маленькую комнатушку в уютное гнездышко? Юра и Ульяна, не понаслышке знают, что значит  жить в тесноте, да еще и с двумя маленькими детьми. Собственными руками они создали в своем шалаше настоящий рай. Супруги уверены, что счастье, не зависит от простора и достатка.',
+            'author'       => 'Виктор Алексеенко',
+            'program'      => 'SVCU',
+            'duration'     => 21,
+            'publish_time' => '2014-07-28 05:10:13',
+            'hd'           => false,
+            'image'        => 'http://share.yourhope.tv/SVCU00913.jpg',
+            'link'         => [
+                'download' => 'http://share.yourhope.tv/SVCU00913.mov',
+                'watch'    => 'https://www.youtube.com/watch?v=youtubeLink',
+            ],
+        ];
+        $episodes['FLNU02412'] = [
+            'code'         => 'FLNU02412',
+            'title'        => 'Вместе веселей',
+            'desc'         => 'Если мы любим наших друзей, то почему с ними ссоримся? Давайте это выясним в "Дружболандии"!',
+            'author'       => 'Ведущая',
+            'program'      => 'FLNU',
+            'duration'     => 11,
+            'publish_time' => '2014-07-28 01:01:13',
+            'hd'           => false,
+            'image'        => 'http://share.yourhope.tv/FLNU02412.jpg',
+            'link'         => [
+                'download' => 'http://share.yourhope.tv/FLNU02412.mov',
                 'watch'    => 'https://www.youtube.com/watch?v=youtubeLink',
             ],
         ];

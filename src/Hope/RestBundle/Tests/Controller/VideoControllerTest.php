@@ -59,7 +59,8 @@ class VideoControllerTest extends RestTestCase
             $response = $client->getResponse()->getContent();
 
             $data = json_decode($response);
-            $this->assertEquals($this->getEpisode($code), $data);
+            $this->assertEquals(1, count($data));
+            $this->assertEquals($this->getEpisode($code), $data[0]);
         } else {
             $this->assertEquals(
                 Response::HTTP_NOT_FOUND,
@@ -105,11 +106,30 @@ class VideoControllerTest extends RestTestCase
             'program_code' => $code,
             'limit'        => '0|3',
         ];
-        $expected = $exists ? 3 : 0;
-        $episode  = $this->checkEpisode($params, $expected, $client);
+        $client->request('GET', $this->url, $params);
 
-        if ($episode) {
-            $this->assertEquals($code, $episode->program);
+        if ($exists) {
+            $this->assertEquals(
+                Response::HTTP_OK,
+                $client->getResponse()->getStatusCode()
+            );
+            $response = $client->getResponse()->getContent();
+
+            $epCode = 'CYCU00112';
+            $data   = json_decode($response);
+
+            $this->assertEquals(2, count($data));
+            $this->assertEquals($epCode, $data[0]->code);
+            $this->assertEquals($this->getEpisode($epCode), $data[0]);
+        } else {
+            $this->assertEquals(
+                Response::HTTP_NOT_FOUND,
+                $client->getResponse()->getStatusCode()
+            );
+            $response = $client->getResponse()->getContent();
+
+            $data = json_decode($response);
+            $this->assertEquals($this->getErrorResult(), $data);
         }
     }
 
@@ -141,8 +161,31 @@ class VideoControllerTest extends RestTestCase
             'program_category' => $id,
             'limit'        => '0|3',
         ];
-        $expected = $exists ? 3 : 0;
-        $this->checkEpisode($params, $expected, $client);
+        $client->request('GET', $this->url, $params);
+
+        if ($exists) {
+            $this->assertEquals(
+                Response::HTTP_OK,
+                $client->getResponse()->getStatusCode()
+            );
+            $response = $client->getResponse()->getContent();
+
+            $epCode = 'FBNU00512';
+            $data   = json_decode($response);
+
+            $this->assertEquals(3, count($data));
+            $this->assertEquals($epCode, $data[0]->code);
+            $this->assertEquals($this->getEpisode($epCode), $data[0]);
+        } else {
+            $this->assertEquals(
+                Response::HTTP_NOT_FOUND,
+                $client->getResponse()->getStatusCode()
+            );
+            $response = $client->getResponse()->getContent();
+
+            $data = json_decode($response);
+            $this->assertEquals($this->getErrorResult(), $data);
+        }
     }
 
     protected function checkEpisode($params, $expected, Client $client)
