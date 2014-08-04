@@ -29,6 +29,7 @@ class ImportCommand extends ContainerAwareCommand
 
         $doctrine = $this->getContainer()->get('doctrine');
         $em = $doctrine->getManager();
+        $em_import = $doctrine->getManager('dbimport');
 
         $time_start = $this->microtime_float();
         $output->writeln('DB Connected.');
@@ -169,11 +170,12 @@ class ImportCommand extends ContainerAwareCommand
 
         //читаем видео
         $offset = 0;
-
+        $allVideosId = array();
         while($videos = $doctrine->getRepository('HopeImport:HopeVideo', 'dbimport')->findBy(array(), array('v_id'=>'ASC'),1000, $offset)){
             $key = 0;
             $videoList = array();
             foreach($videos as $obj){
+                $allVideosId[] = $obj->getVId();
                 $videoList[$key]['v_id']     = $obj->getVId();
                 $videoList[$key]['v_serial'] = $obj->getVSerial();
                 $videoList[$key]['v_name']   = $obj->getVName();
@@ -201,13 +203,14 @@ class ImportCommand extends ContainerAwareCommand
                 }
 
                 $apiVideo = $doctrine
-                    ->getRepository('HopeRestBundle:Episode', 'default')
+                    ->getRepository('HopeRestBundle:Episode')
                     ->findOneByCode($video['v_serial'])
                 ;
-
+                unset($apiVideoId);
                 if($apiVideo!=null){
                     $apiVideoId = $apiVideo->getId();
                 }
+
 
                 if(empty($apiVideoId)){
                     $videoEntity = new Episode();
@@ -276,6 +279,13 @@ class ImportCommand extends ContainerAwareCommand
             $offset += 1000;
         }
 
+        $allIDs = implode(',',$allVideosId);
+        //print $allIDs."\r\n";
+        $qb = $em->createQueryBuilder();
+        $qb->delete('HopeRestBundle:Episode', 'e')
+            ->where($qb->expr()->notIn('e.id', $allVideosId));
+        $qb->getQuery()->execute();
+
         $output->writeln('');
         $output->writeln('Schedule Read Started');
 
@@ -284,8 +294,8 @@ class ImportCommand extends ContainerAwareCommand
 
         $ptime7days = new \DateTime('7 days ago');
 
-        $em1 = $doctrine->getManager('dbimport');
-        $qb = $em1->createQueryBuilder();
+
+        $qb = $em_import->createQueryBuilder();
 
         while($schedules = $qb->select('s')->from('HopeImport:HopeSchedule','s')->where('s.ptime >= :ptime')->setParameters(array('ptime' => $ptime7days->format('Y-m-d H:i:s')))
             ->setMaxResults(1000)->setFirstResult($offset)->getQuery()->getResult()){
@@ -303,7 +313,7 @@ class ImportCommand extends ContainerAwareCommand
                 ++$key;
             }
 
-            //записываем видео
+            //записываем расписание
             foreach($timeList as $obj){
 
                 $apiTime = $doctrine
@@ -345,7 +355,7 @@ class ImportCommand extends ContainerAwareCommand
 
             $em->flush();
 
-            $qb = $em1->createQueryBuilder();
+            $qb = $em_import->createQueryBuilder();
             $offset += 1000;
         }
         $time_end = $this->microtime_float();
