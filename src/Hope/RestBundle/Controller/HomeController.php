@@ -83,8 +83,8 @@ class HomeController extends Controller
             foreach($catVideos as $video){
                 $vid = $video->getId();
 
-                $videoList[$vid]['id'] = $vid;
-                $videoList[$vid]['cat_id'] = $obj->getId();
+               // $videoList[$vid]['id'] = $vid;
+               //$videoList[$vid]['cat_id'] = $obj->getId();
                 $videoList[$vid]['code'] = $video->getCode();
                 $videoList[$vid]['title'] = $video->getTitle();
                 $videoList[$vid]['desc'] = $video->getDescription();
@@ -110,7 +110,16 @@ class HomeController extends Controller
 
         $settings['categories'] = $categoriesList;
         unset($categoriesList);
+        $publishTime = array();
+        $idVideo     = array();
 
+
+        foreach($topVideo as $key=>$video){
+            $publishTime[$key] = $video['publish_time'];
+            //$idVideo[$key]     = $video['id'];
+
+        }
+        array_multisort($publishTime, SORT_DESC, $topVideo);
         //  Получаем список Top Videos
         $settings['top_videos'] = $topVideo;
 

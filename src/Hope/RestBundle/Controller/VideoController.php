@@ -48,10 +48,10 @@ class VideoController extends Controller
         //обработка полученных видео объектов
         if(!empty($videos)){
 
-            $videoList = array();
+            $videoList = [];
             foreach($videos as $key=>$video){
                 $vid = $video->getId();
-                $videoList[$key]['id'] = $vid;
+                //$videoList[$key]['id'] = $vid;
                 $videoList[$key]['code'] = $video->getCode();
                 $videoList[$key]['title'] = $video->getTitle();
                 $videoList[$key]['desc'] = $video->getDescription();
@@ -62,7 +62,7 @@ class VideoController extends Controller
                 $videoList[$key]['image'] = 'http://share.yourhope.tv/'.$video->getCode().'.jpg';
                 $videoList[$key]['link'] = array(
                     "download" => 'http://share.yourhope.tv/'.$video->getCode().'.mov',
-                    "watch"    => $video->getWatch()
+                    "watch"    => 'https://www.youtube.com/watch?v='.$video->getWatch()
                 );
                 $programVideo = $video->getProgram();
                 $videoList[$key]['program'] = $programVideo->getCode();

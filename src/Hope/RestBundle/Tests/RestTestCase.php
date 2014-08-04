@@ -45,7 +45,7 @@ class RestTestCase extends WebTestCase
             'desc'         => 'Тим, хто хоче дізнатись щось най-най-най, буде цікаво послухати розповіді Добрячка Даші та Ганнусі.',
             'author'       => 'Добрячек',
             'program'      => 'HDVU',
-            'duration'     => 200,
+            'duration'     => 1000,
             'publish_time' => '2014-07-28 22:07:12',
             'hd'           => true,
             'image'        => 'http://share.yourhope.tv/HDVU01612.jpg',
