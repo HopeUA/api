@@ -3,21 +3,10 @@ namespace Hope\RestBundle\Tests\Controller;
 
 use Hope\RestBundle\Tests\RestTestCase;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Bundle\FrameworkBundle\Client;
 
 class VideoControllerTest extends RestTestCase
 {
     private $url = '/v1/video.json';
-
-    private $notFoundAttrs = [
-        'error' => [
-            'required' => true,
-            'type'     => 'boolean',
-        ],
-        'message' => [
-            'required' => true,
-        ],
-    ];
 
     public function episodeCodeProvider()
     {
@@ -69,7 +58,7 @@ class VideoControllerTest extends RestTestCase
             $response = $client->getResponse()->getContent();
 
             $data = json_decode($response);
-            $this->assertEquals($this->getErrorResult(), $data);
+            $this->assertEquals($this->getErrorResult('episode'), $data);
         }
     }
 
@@ -129,7 +118,7 @@ class VideoControllerTest extends RestTestCase
             $response = $client->getResponse()->getContent();
 
             $data = json_decode($response);
-            $this->assertEquals($this->getErrorResult(), $data);
+            $this->assertEquals($this->getErrorResult('episode'), $data);
         }
     }
 
@@ -184,52 +173,7 @@ class VideoControllerTest extends RestTestCase
             $response = $client->getResponse()->getContent();
 
             $data = json_decode($response);
-            $this->assertEquals($this->getErrorResult(), $data);
+            $this->assertEquals($this->getErrorResult('episode'), $data);
         }
-    }
-
-    protected function checkEpisode($params, $expected, Client $client)
-    {
-        $episode = null;
-
-        $client->request('GET', $this->url, $params);
-        if ($expected) {
-            $this->assertEquals(
-                Response::HTTP_OK,
-                $client->getResponse()->getStatusCode()
-            );
-
-            $response = $client->getResponse()->getContent();
-
-            $data = json_decode($response);
-            $this->assertInternalType('array', $data);
-            $this->assertEquals($expected, count($data));
-
-            $episode = $data[0];
-            $this->checkAttributes($episode, $this->episodeAttrs);
-
-            // Link obj
-            $this->assertObjectHasAttribute('link', $episode);
-            $link = $episode->link;
-            $this->assertInstanceOf('stdClass', $link);
-            $this->assertObjectHasAttribute('download', $link);
-            $this->assertAttributeNotEmpty('download', $link);
-            $this->assertObjectHasAttribute('watch', $link);
-            $this->assertAttributeNotEmpty('watch', $link);
-
-        } else {
-            $this->assertEquals(
-                Response::HTTP_NOT_FOUND,
-                $client->getResponse()->getStatusCode()
-            );
-
-            $response = $client->getResponse()->getContent();
-
-            $data = json_decode($response);
-            $this->assertInstanceOf('stdClass', $data);
-            $this->checkAttributes($data, $this->notFoundAttrs);
-        }
-
-        return $episode;
     }
 }
