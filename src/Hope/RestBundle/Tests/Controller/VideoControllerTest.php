@@ -9,34 +9,6 @@ class VideoControllerTest extends RestTestCase
 {
     private $url = '/v1/video.json';
 
-    private $episodeAttrs = [
-        'code'         => [
-            'required' => true,
-            'regex'    => '^[A-Z]{4}\d{5}$',
-        ],
-        'title'        => [
-            'required' => true,
-        ],
-        'desc'         => [],
-        'author'       => [],
-        'program'      => [
-            'required' => true,
-            'regex'    => '^[A-Z]{4}$',
-        ],
-        'duration'     => [
-            'type' => 'integer',
-        ],
-        'publish_time' => [
-            'regex' => '\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}',
-        ],
-        'hd'           => [
-            'type' => 'boolean'
-        ],
-        'image'        => [
-            'required' => true
-        ],
-    ];
-
     private $notFoundAttrs = [
         'error' => [
             'required' => true,
@@ -51,7 +23,7 @@ class VideoControllerTest extends RestTestCase
     {
         return [
             [
-                'code'   => 'WUCU00311',
+                'code'   => 'FLNU02412',
                 'exists' => true,
             ],
             [
@@ -75,12 +47,28 @@ class VideoControllerTest extends RestTestCase
     public function testByCode($code, $exists)
     {
         $client = static::createClient();
-        $params   = ['code' => $code];
-        $expected = $exists ? 1 : 0;
-        $episode  = $this->checkEpisode($params, $expected, $client);
+        $params = ['code' => $code];
 
-        if ($episode) {
-            $this->assertEquals($code, $episode->code);
+        $client->request('GET', $this->url, $params);
+
+        if ($exists) {
+            $this->assertEquals(
+                Response::HTTP_OK,
+                $client->getResponse()->getStatusCode()
+            );
+            $response = $client->getResponse()->getContent();
+
+            $data = json_decode($response);
+            $this->assertEquals($this->getEpisode($code), $data);
+        } else {
+            $this->assertEquals(
+                Response::HTTP_NOT_FOUND,
+                $client->getResponse()->getStatusCode()
+            );
+            $response = $client->getResponse()->getContent();
+
+            $data = json_decode($response);
+            $this->assertEquals($this->getErrorResult(), $data);
         }
     }
 
@@ -88,7 +76,7 @@ class VideoControllerTest extends RestTestCase
     {
         return [
             [
-                'code'   => 'WUCU',
+                'code'   => 'CYCU',
                 'exists' => true,
             ],
             [

@@ -2,6 +2,7 @@
 namespace Hope\RestBundle\Tests\Controller;
 
 use Hope\RestBundle\Tests\RestTestCase;
+use MyProject\Proxies\__CG__\OtherProject\Proxies\__CG__\stdClass;
 use Symfony\Component\HttpFoundation\Response;
 
 class HomeControllerTest extends RestTestCase
@@ -53,16 +54,15 @@ class HomeControllerTest extends RestTestCase
         $banners = $data->banners;
 
         $this->assertInternalType('array', $banners);
+        $banner = $banners[0];
 
-        if (count($banners)) {
-            $banner = $banners[array_rand($banners)];
-
-            $this->assertInstanceOf('stdClass', $banner);
-            $this->assertObjectHasAttribute('image', $banner);
-            $this->assertNotEmpty($banner->image);
-            $this->assertObjectHasAttribute('url', $banner);
-            $this->assertNotEmpty($banner->url);
-        }
+        $original = [
+            'id'    => 1,
+            'image' => 'http://hope.ua/test.jpg',
+            'url'   => 'http://hope.ua',
+        ];
+        $original = json_decode(json_encode($original));
+        $this->assertEquals($original, $banner);
     }
 
     /**
@@ -117,13 +117,14 @@ class HomeControllerTest extends RestTestCase
         $this->assertInternalType('array', $categories);
         $this->assertGreaterThan(0, count($categories));
 
-        $cat = $categories[array_rand($categories)];
+        $cat = $categories[0];
 
         $this->assertObjectHasAttribute('id', $cat);
         $this->assertInternalType('integer', $cat->id);
+        $this->assertEquals(1, $cat->id);
 
         $this->assertObjectHasAttribute('title', $cat);
-        $this->assertNotEmpty($cat->title);
+        $this->assertEquals('молодежные', $cat->title);
 
         $this->assertObjectHasAttribute('programs', $cat);
         return $cat->programs;
@@ -152,23 +153,19 @@ class HomeControllerTest extends RestTestCase
     public function testPrograms($programs)
     {
         $this->assertInternalType('array', $programs);
-        if (count($programs)) {
-            $program = $programs[array_rand($programs)];
-            $this->assertInstanceOf('stdClass', $program);
 
-            $attrs = [
-                'code' => [
-                    'required' => true,
-                    'regex'    => '^[A-Z]{4}$',
-                ],
-                'title' => [
-                    'required' => true,
-                ],
-                'desc_short' => [],
-                'desc_full'  => [],
-            ];
-            $this->checkAttributes($program, $attrs);
-        }
+        $program = $programs[0];
+        $this->assertInstanceOf('stdClass', $program);
+
+        $original = [
+            'id'          => 7,
+            'code'        => 'CYCU',
+            'title'       => 'Поспілкуймося',
+            'desc_short'  => 'Молодіжне ток-шоу на теми, які найбільше хвилюють молодь. Це відкритий діалог молодих людей та досвідчених духовних лідерів.',
+            'desc_full'   => ''
+        ];
+        $original = json_decode(json_encode($original));
+        $this->assertEquals($original, $program);
     }
 
     /**
@@ -206,52 +203,11 @@ class HomeControllerTest extends RestTestCase
         $videos = $data->top_videos;
 
         $this->assertInternalType('array', $videos);
-        $this->assertGreaterThan(0, count($videos));
+        $this->assertEquals(6, count($videos));
 
-        $video = $videos[array_rand($videos)];
-
-        $this->assertInstanceOf('stdClass', $video);
-
-        $attrs = [
-            'code'         => [
-                'required' => true,
-                'regex'    => '^[A-Z]{4}\d{5}$',
-            ],
-            'title'        => [
-                'required' => true,
-            ],
-            'desc'         => [],
-            'author'       => [],
-            'program'      => [
-                'required' => true,
-                'regex'    => '^[A-Z]{4}$',
-            ],
-            'duration'     => [
-                'type' => 'integer',
-            ],
-            'publish_time' => [
-                'regex' => '\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}',
-            ],
-            'hd'           => [
-                'type' => 'boolean'
-            ],
-            'image'        => [
-                'required' => true
-            ],
-        ];
-
-        $this->checkAttributes($video, $attrs);
-        $this->assertObjectHasAttribute('link', $video);
-
-        // Link obj
-        $link = $video->link;
-
-        $this->assertInstanceOf('stdClass', $link);
-
-        $this->assertObjectHasAttribute('download', $link);
-        $this->assertAttributeNotEmpty('download', $link);
-        $this->assertObjectHasAttribute('watch', $link);
-        $this->assertAttributeNotEmpty('watch', $link);
+        $this->assertEquals($this->getEpisode('HDVU01612'), $videos[0]);
+        $this->assertEquals($this->getEpisode('SVCU00913'), $videos[5]);
+        $this->assertEquals($this->getEpisode('FLNU02412'), $videos[8]);
     }
 
     /**
@@ -281,22 +237,15 @@ class HomeControllerTest extends RestTestCase
         $this->assertInternalType('array', $about);
         $this->assertEquals(3, count($about));
 
-        foreach ($about as $page) {
-            $this->assertInstanceOf('stdClass', $page);
+        $page = $about[0];
 
-            $attrs = [
-                'section' => [
-                    'required' => true,
-                    'regex'    => '^[a-z]+$',
-                ],
-                'title'   => [
-                    'required' => true,
-                ],
-                'text'    => [
-                    'required' => true,
-                ],
-            ];
-            $this->checkAttributes($page, $attrs);
-        }
+        $original = [
+            'id'      => 1,
+            'section' => 'first',
+            'title'   => 'first',
+            'text'    => 'first',
+        ];
+        $original = json_decode(json_encode($original));
+        $this->assertEquals($original, $page);
     }
 }
