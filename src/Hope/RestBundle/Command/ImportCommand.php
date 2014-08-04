@@ -175,7 +175,7 @@ class ImportCommand extends ContainerAwareCommand
             $key = 0;
             $videoList = array();
             foreach($videos as $obj){
-                $allVideosId[] = $obj->getVId();
+                $allVideosId[]               = $obj->getVId();
                 $videoList[$key]['v_id']     = $obj->getVId();
                 $videoList[$key]['v_serial'] = $obj->getVSerial();
                 $videoList[$key]['v_name']   = $obj->getVName();
@@ -289,17 +289,16 @@ class ImportCommand extends ContainerAwareCommand
 
         //читаем расписание
         $offset = 0;
-
         $ptime7days = new \DateTime('7 days ago');
-
+        $allSchedulesId = array();
 
         $qb = $em_import->createQueryBuilder();
-
         while($schedules = $qb->select('s')->from('HopeImport:HopeSchedule','s')->where('s.ptime >= :ptime')->setParameters(array('ptime' => $ptime7days->format('Y-m-d H:i:s')))
             ->setMaxResults(1000)->setFirstResult($offset)->getQuery()->getResult()){
             $key = 0;
             $timeList = array();
             foreach($schedules as $obj){
+                $allSchedulesId[]               = $obj->getId();
                 $timeList[$key]['id']           = $obj->getId();
                 $timeList[$key]['program']      = $obj->getProgram();
                 $timeList[$key]['series']       = $obj->getSeries();
@@ -315,7 +314,7 @@ class ImportCommand extends ContainerAwareCommand
             foreach($timeList as $obj){
 
                 $apiTime = $doctrine
-                    ->getRepository('HopeRestBundle:Schedule', 'default')
+                    ->getRepository('HopeRestBundle:Schedule')
                     ->find($obj['id'])
                 ;
 
@@ -356,6 +355,12 @@ class ImportCommand extends ContainerAwareCommand
             $qb = $em_import->createQueryBuilder();
             $offset += 1000;
         }
+
+        $qb = $em->createQueryBuilder();
+        $qb->delete('HopeRestBundle:Schedule', 's')
+            ->where($qb->expr()->notIn('s.id', $allSchedulesId));
+        $qb->getQuery()->execute();
+
         $time_end = $this->microtime_float();
         $output->writeln('');
         $output->writeln('<info>Successfully Finished in '.($time_end-$time_start).' s</info>');
