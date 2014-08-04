@@ -279,8 +279,6 @@ class ImportCommand extends ContainerAwareCommand
             $offset += 1000;
         }
 
-        $allIDs = implode(',',$allVideosId);
-        //print $allIDs."\r\n";
         $qb = $em->createQueryBuilder();
         $qb->delete('HopeRestBundle:Episode', 'e')
             ->where($qb->expr()->notIn('e.id', $allVideosId));
