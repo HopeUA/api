@@ -77,16 +77,12 @@ class HomeController extends Controller
             }
 
             //получаем видео для программ из данной категории
-            $query = $this->getDoctrine()->getManager()->createQueryBuilder();
-            $query->select('e')
-                  ->from('HopeRestBundle:Episode', 'e');
-            $query->add('where', $query->expr()->in('e.program_id', $programsIds));
-            $query->orderBy('e.publish_time', 'DESC');
-            $query->setMaxResults(2);
-            $catVideos = $query->getQuery()->getResult();
+            $catVideos = $this->getDoctrine()->getRepository('HopeRestBundle:Episode')
+                        ->getTopTwoVideos($programsIds);
 
             foreach($catVideos as $video){
                 $vid = $video->getId();
+
                 $videoList[$vid]['id'] = $vid;
                 $videoList[$vid]['cat_id'] = $obj->getId();
                 $videoList[$vid]['code'] = $video->getCode();
@@ -103,10 +99,12 @@ class HomeController extends Controller
                 );
                 $programVideo = $video->getProgram();
                 $videoList[$vid]['program'] = $programVideo->getCode();
+                $topVideo[] = $videoList[$vid];
+                unset($videoList[$vid]);
             }
 
-            $topVideo[] = $videoList[$vid];
-            unset($videoList[$vid]);
+
+
 
         }
 

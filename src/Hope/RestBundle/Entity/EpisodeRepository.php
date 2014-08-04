@@ -60,4 +60,17 @@ class EpisodeRepository extends EntityRepository
         $results = $query->getQuery()->getResult();
         return $results;
     }
+
+    public function getTopTwoVideos($ids = array()){
+
+        $query = $this->getEntityManager()->createQueryBuilder();
+        $query->select('e')
+            ->from('HopeRestBundle:Episode', 'e');
+        $query->add('where', $query->expr()->in('e.program_id', $ids));
+        $query->orderBy('e.publish_time', 'DESC');
+        $query->setMaxResults(2);
+        $videos = $query->getQuery()->getResult();
+
+        return $videos;
+    }
 } 
