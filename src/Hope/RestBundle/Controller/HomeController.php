@@ -95,7 +95,7 @@ class HomeController extends Controller
                                                     "watch"    => "https://www.youtube.com/watch?v=".$video->watch
                 );
 
-                $videoList[$vid]['program_id']   = $video->id;
+                $videoList[$vid]['program']      = $video->program;
                 $topVideo[]                      = $videoList[$vid];
 
                 unset($videoList[$vid]);

@@ -28,6 +28,7 @@ class VideoController extends Controller
         }
         if($request->get('text')){
             $params['text']               = $request->get('text');
+            $params['text']               = addcslashes($params['text'], "%_");
         }
         if($request->get('sort')){
             $params['sort']               = $request->get('sort');
