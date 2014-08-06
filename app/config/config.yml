@@ -83,11 +83,8 @@ doctrine:
                         prefix:     Hope\RestBundle\Entity\Import
                         alias:      HopeImport
 
-            auto_generate_proxy_classes: %kernel.debug%
+            #auto_generate_proxy_classes: "%kernel.debug%"
             #auto_mapping: true
-
-
-
 
 # Swiftmailer Configuration
 swiftmailer:

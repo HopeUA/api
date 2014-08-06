@@ -4,14 +4,16 @@ php:
   - 5.4
   - 5.5
   - 5.6
-  - hhvm
 
 services: mysql
 
 before_script:
-  - unzip src/Hope/RestBundle/Resources/tests/api_test_2014-08-04.sql.gz dump.sql
-  - mysql -e 'create database app_test;'
-  - mysql app_test < dump.sql
+  - mysql -e 'create database api_test;'
+  - mysql api_test < src/Hope/RestBundle/Resources/tests/api_test_2014-08-04.sql
+  - cp app/config/parameters.yml.dist app/config/parameters.yml
+  - "mkdir -p ~/.composer"
+  - composer self-update
+  - composer install --prefer-source --optimize-autoloader
   - composer install -n
 
 script: phpunit -c app

@@ -12,9 +12,9 @@ parameters:
     database2_password: ~
 
     test_database_host: 127.0.0.1
-    test_database_name: ~
-    test_database_user: ~
-    test_database_password: ~
+    test_database_name: api_test
+    test_database_user: root
+    test_database_password:
 
     mailer_transport:  smtp
     mailer_host:       127.0.0.1
