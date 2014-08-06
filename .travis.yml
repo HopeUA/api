@@ -9,8 +9,9 @@ php:
 services: mysql
 
 before_script:
+  - unzip src/Hope/RestBundle/Resources/tests/api_test_2014-08-04.sql.gz dump.sql
   - mysql -e 'create database app_test;'
-  - mysql app_test < src/Hope/RestBundle/Resources/tests/api_test_2014-08-04.sql.gz
+  - mysql app_test < dump.sql
   - composer install -n
 
 script: phpunit -c app
