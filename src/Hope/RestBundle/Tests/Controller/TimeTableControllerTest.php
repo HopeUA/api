@@ -36,6 +36,7 @@ class TimeTableControllerTest extends RestTestCase
             ['2014-08-02 12:12:12'],
             ['2014'],
             ['___'],
+            ['Invalidate'],
         ];
     }
 
