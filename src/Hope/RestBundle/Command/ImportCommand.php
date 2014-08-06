@@ -1,16 +1,13 @@
 <?php
 namespace Hope\RestBundle\Command;
 
-use Hope\RestBundle\Entity\Import\HopeSchedule;
-use Hope\RestBundle\Entity\Schedule;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Hope\RestBundle\Entity\Category;
 use Hope\RestBundle\Entity\Program;
 use Hope\RestBundle\Entity\Episode;
+use Hope\RestBundle\Entity\Schedule;
 
 
 class ImportCommand extends ContainerAwareCommand
@@ -34,6 +31,142 @@ class ImportCommand extends ContainerAwareCommand
         $time_start = $this->microtime_float();
 
         $output->writeln('DB Connected.');
+
+        $output->writeln('');
+        $output->writeln('Category Read Started.');
+
+        //читаем категории
+        $categories = $doctrine
+            ->getRepository('HopeImport:HopeCategory', 'dbimport')
+            ->findAll()
+        ;
+
+        $categoryList    = array();
+        $allCategoriesId = array();
+        foreach($categories as $key => $obj){
+            $allCategoriesId[]             = $obj->getCId();
+            $categoryList[$key]['c_id']    = $obj->getCId();
+            $categoryList[$key]['c_name']  = $obj->getCName();
+            $categoryList[$key]['c_order'] = $obj->getCOrder();
+        }
+
+        //записываем категории
+        foreach($categoryList as $category){
+
+            //читаем категории API
+            $apiCategory = $doctrine
+                ->getRepository('HopeRestBundle:Category', 'default')
+                ->find($category['c_id'])
+            ;
+            if($apiCategory!=null){
+                $apiCategoryId = $apiCategory->getId();
+            }
+            if(empty($apiCategoryId)){
+                $categoryEntity = new Category();
+                $categoryEntity->setId($category['c_id']);
+                $categoryEntity->setTitle($category['c_name']);
+                $categoryEntity->setSort($category['c_order']);
+                $em->persist($categoryEntity);
+
+            }else{
+                $catTitle = $apiCategory->getTitle();
+                $catSort  = $apiCategory->getSort();
+
+                if($catTitle != $category['c_name'] && !empty($category['c_name'])){
+                    $apiCategory->setTitle($category['c_name']);
+                }
+                if($catSort != $category['c_order'] && !empty($category['c_order'])){
+                    $apiCategory->setSort($category['c_order']);
+                }
+            }
+
+        }
+
+        $em->flush();
+
+        $output->writeln('');
+        $output->writeln('Program Read Started.');
+
+        //читаем программы
+        $programs = $doctrine
+            ->getRepository('HopeImport:HopeProgram', 'dbimport')
+            ->findAll()
+        ;
+
+        $programList   = array();
+        $allProgramsCode = array();
+        foreach($programs as $key => $obj){
+            if(mb_strlen($obj->getCatAlias())!=4) {
+                //пропускаем программу если код программы не равен 4
+                continue;
+            }
+            $allProgramsCode[]                  = $obj->getCatAlias();
+            $programList[$key]['cat_id']        = $obj->getCatId();
+            $programList[$key]['cat_alias']     = $obj->getCatAlias();
+            $programList[$key]['cat_name']      = $obj->getCatName();
+            $programList[$key]['cat_shortdesc'] = $obj->getCatShortdesc();
+            $programList[$key]['cat_desc']      = $obj->getCatDesc();
+            $programList[$key]['cat_category']  = $obj->getCatCategory();
+        }
+
+        //записываем программы
+        foreach($programList as $program){
+
+            //читаем категории API
+            $apiProgram = $doctrine
+                ->getRepository('HopeRestBundle:Program', 'default')
+                ->findOneByCode($program['cat_alias'])
+            ;
+
+            if($apiProgram != null){
+                $apiProgramId = $apiProgram->getId();
+            }
+
+            if(empty($apiProgramId)){
+                $programEntity = new Program();
+                $programEntity->setId($program['cat_id']);
+                $programEntity->setCode($program['cat_alias']);
+                $programEntity->setTitle($program['cat_name']);
+                $programEntity->setDescShort($program['cat_shortdesc']);
+                $programEntity->setDescFull($program['cat_desc']);
+                $parent = $doctrine
+                    ->getRepository('HopeRestBundle:Category')
+                    ->find($program['cat_category'])
+                ;
+                $programEntity->setCategory($parent);
+
+                $em->persist($programEntity);
+
+            }else{
+                $programCode        = $apiProgram->getCode();
+                $programTitle       = $apiProgram->getTitle();
+                $programDescShort   = $apiProgram->getDescShort();
+                $programDescFull    = $apiProgram->getDescFull();
+                $programCategory    = $apiProgram->getCategory()->getId();
+
+                if($programCode != $program['cat_alias'] && !empty($program['cat_alias'])){
+                    $apiProgram->setCode($program['cat_alias']);
+                }
+                if($programTitle != $program['cat_name'] && !empty($program['cat_name'])){
+                    $apiProgram->setTitle($program['cat_name']);
+                }
+                if($programDescShort != $program['cat_shortdesc'] && !empty($program['cat_shortdesc'])){
+                    $apiProgram->setDescShort($program['cat_shortdesc']);
+                }
+                if($programDescFull != $program['cat_desc'] && !empty($program['cat_desc'])){
+                    $apiProgram->setDescFull($program['cat_desc']);
+                }
+                if($programCategory != $program['cat_category'] && !empty($program['cat_category'])){
+                    $parent = $doctrine
+                        ->getRepository('HopeRestBundle:Category')
+                        ->find($program['cat_category'])
+                    ;
+                    $apiProgram->setCategory($parent);
+                }
+            }
+        }
+        $em->flush();
+
         $output->writeln('');
         $output->writeln('Video Read Started');
 
@@ -148,150 +281,16 @@ class ImportCommand extends ContainerAwareCommand
             $offset += 1000;
         }
 
+        //Video Program and Category Delete is not in prod DB
         $qb = $em->createQueryBuilder();
         $qb->delete('HopeRestBundle:Episode', 'e')
            ->where($qb->expr()->notIn('e.id', $allVideosId));
         $qb->getQuery()->execute();
 
-
-        $output->writeln('');
-        $output->writeln('Program Read Started.');
-
-        //читаем программы
-        $programs = $doctrine
-            ->getRepository('HopeImport:HopeProgram', 'dbimport')
-            ->findAll()
-        ;
-
-        $programList   = array();
-        $allProgramsCode = array();
-        foreach($programs as $key => $obj){
-            if(mb_strlen($obj->getCatAlias())!=4) {
-                //пропускаем программу если код программы не равен 4
-                continue;
-            }
-            $allProgramsCode[]                  = $obj->getCatAlias();
-            $programList[$key]['cat_id']        = $obj->getCatId();
-            $programList[$key]['cat_alias']     = $obj->getCatAlias();
-            $programList[$key]['cat_name']      = $obj->getCatName();
-            $programList[$key]['cat_shortdesc'] = $obj->getCatShortdesc();
-            $programList[$key]['cat_desc']      = $obj->getCatDesc();
-            $programList[$key]['cat_category']  = $obj->getCatCategory();
-        }
-
-        //записываем программы
-        foreach($programList as $program){
-
-            //читаем категории API
-            $apiProgram = $doctrine
-                ->getRepository('HopeRestBundle:Program', 'default')
-                ->findOneByCode($program['cat_alias'])
-            ;
-
-            if($apiProgram != null){
-                $apiProgramId = $apiProgram->getId();
-            }
-            if(empty($apiProgramId)){
-                $programEntity = new Program();
-                $programEntity->setId($program['cat_id']);
-                $programEntity->setCode($program['cat_alias']);
-                $programEntity->setTitle($program['cat_name']);
-                $programEntity->setDescShort($program['cat_shortdesc']);
-                $programEntity->setDescFull($program['cat_desc']);
-                $parent = $doctrine
-                    ->getRepository('HopeRestBundle:Category')
-                    ->find($program['cat_category'])
-                ;
-                $programEntity->setCategory($parent);
-
-                $em->persist($programEntity);
-
-            }else{
-                $programCode        = $apiProgram->getCode();
-                $programTitle       = $apiProgram->getTitle();
-                $programDescShort   = $apiProgram->getDescShort();
-                $programDescFull    = $apiProgram->getDescFull();
-                $programCategory    = $apiProgram->getCategory()->getId();
-
-                if($programCode != $program['cat_alias'] && !empty($program['cat_alias'])){
-                    $apiProgram->setCode($program['cat_alias']);
-                }
-                if($programTitle != $program['cat_name'] && !empty($program['cat_name'])){
-                    $apiProgram->setTitle($program['cat_name']);
-                }
-                if($programDescShort != $program['cat_shortdesc'] && !empty($program['cat_shortdesc'])){
-                    $apiProgram->setDescShort($program['cat_shortdesc']);
-                }
-                if($programDescFull != $program['cat_desc'] && !empty($program['cat_desc'])){
-                    $apiProgram->setDescFull($program['cat_desc']);
-                }
-                if($programCategory != $program['cat_category'] && !empty($program['cat_category'])){
-                    $parent = $doctrine
-                        ->getRepository('HopeRestBundle:Category')
-                        ->find($program['cat_category'])
-                    ;
-                    $apiProgram->setCategory($parent);
-                }
-            }
-        }
-        $em->flush();
-
         $qb = $em->createQueryBuilder();
         $qb->delete('HopeRestBundle:Program', 'p')
            ->where($qb->expr()->notIn('p.code', $allProgramsCode));
         $qb->getQuery()->execute();
-
-        $output->writeln('');
-        $output->writeln('Category Read Started.');
-
-        //читаем категории
-        $categories = $doctrine
-            ->getRepository('HopeImport:HopeCategory', 'dbimport')
-            ->findAll()
-        ;
-
-        $categoryList    = array();
-        $allCategoriesId = array();
-        foreach($categories as $key => $obj){
-            $allCategoriesId[]             = $obj->getCId();
-            $categoryList[$key]['c_id']    = $obj->getCId();
-            $categoryList[$key]['c_name']  = $obj->getCName();
-            $categoryList[$key]['c_order'] = $obj->getCOrder();
-        }
-
-        //записываем категории
-        foreach($categoryList as $category){
-
-            //читаем категории API
-            $apiCategory = $doctrine
-                ->getRepository('HopeRestBundle:Category', 'default')
-                ->find($category['c_id'])
-            ;
-            if($apiCategory!=null){
-                $apiCategoryId = $apiCategory->getId();
-            }
-            if(empty($apiCategoryId)){
-                $categoryEntity = new Category();
-                $categoryEntity->setId($category['c_id']);
-                $categoryEntity->setTitle($category['c_name']);
-                $categoryEntity->setSort($category['c_order']);
-                $em->persist($categoryEntity);
-
-            }else{
-                $catTitle = $apiCategory->getTitle();
-                $catSort  = $apiCategory->getSort();
-
-                if($catTitle != $category['c_name'] && !empty($category['c_name'])){
-                    $apiCategory->setTitle($category['c_name']);
-                }
-                if($catSort != $category['c_order'] && !empty($category['c_order'])){
-                    $apiCategory->setSort($category['c_order']);
-                }
-            }
-
-        }
-
-        $em->flush();
 
         $qb = $em->createQueryBuilder();
         $qb->delete('HopeRestBundle:Category', 'c')

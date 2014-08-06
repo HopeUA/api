@@ -63,14 +63,29 @@ class EpisodeRepository extends EntityRepository
 
     public function getTopTwoVideos($ids = array()){
 
-        $query = $this->getEntityManager()->createQueryBuilder();
-        $query->select('e')
-            ->from('HopeRestBundle:Episode', 'e');
-        $query->add('where', $query->expr()->in('e.program_id', $ids));
-        $query->orderBy('e.publish_time', 'DESC');
-        $query->setMaxResults(2);
-        $videos = $query->getQuery()->getResult();
+        //SELECT e.* FROM (SELECT * FROM video v WHERE v.program_id IN(7, 36) ORDER BY v.publish_time DESC) e GROUP by e.program_id LIMIT 2
+       /* $subQuery = $this->getEntityManager()->createQueryBuilder();
+        $subQuery
+            ->select('v.id')
+            ->from('HopeRestBundle:Episode', 'v');
+        $subQuery->where($subQuery->expr()->in('v.program_id',$ids));
+        $subQuery->orderBy('v.publish_time', 'DESC');
 
-        return $videos;
+        $query = $this->getEntityManager()->createQueryBuilder();
+        $query
+            ->select('e')
+            ->from('HopeRestBundle:Episode', 'e');
+        $query->where($query->expr()->in('e.id',$subQuery->getDQL()));
+        $query->groupBy('e.program_id');
+        $query->setMaxResults(2);*/
+
+        $implodeIds = implode(',', $ids);
+        $sql = "SELECT e.* FROM (SELECT v.* FROM video v WHERE v.program_id IN(".$implodeIds.") ORDER BY v.publish_time DESC) e GROUP by e.program_id ORDER by e.publish_time DESC LIMIT 0,2";
+        $stmt = $this->getEntityManager()->getConnection()->prepare($sql);
+        $stmt->execute();
+        $results = $stmt->fetchAll();
+        $entityResult = json_decode(json_encode($results));
+
+        return $entityResult;
     }
 } 

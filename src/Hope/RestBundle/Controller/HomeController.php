@@ -81,45 +81,38 @@ class HomeController extends Controller
                         ->getTopTwoVideos($programsIds);
 
             foreach($catVideos as $video){
-                $vid = $video->getId();
-
-               // $videoList[$vid]['id'] = $vid;
-               //$videoList[$vid]['cat_id'] = $obj->getId();
-                $videoList[$vid]['code'] = $video->getCode();
-                $videoList[$vid]['title'] = $video->getTitle();
-                $videoList[$vid]['desc'] = $video->getDescription();
-                $videoList[$vid]['author'] = $video->getAuthor();
-                $videoList[$vid]['duration'] = $video->getDuration();
-                $videoList[$vid]['publish_time'] = $video->getPublishTime()->format( 'Y-m-d H:i:s' );
-                $videoList[$vid]['hd'] = $video->getHd();
-                $videoList[$vid]['image'] = "http://share.yourhope.tv/".$video->getCode().'.jpg';
-                $videoList[$vid]['link'] = array(
-                    "download" => "http://share.yourhope.tv/".$video->getCode().'.mov',
-                    "watch"    => "https://www.youtube.com/watch?v=".$video->getWatch()
+                $vid                             = $video->id;
+                $videoList[$vid]['code']         = $video->code;
+                $videoList[$vid]['title']        = $video->title;
+                $videoList[$vid]['desc']         = $video->description;
+                $videoList[$vid]['author']       = $video->author;
+                $videoList[$vid]['duration']     = $video->duration;
+                $videoList[$vid]['publish_time'] = $video->publish_time;
+                $videoList[$vid]['hd']           = $video->hd;
+                $videoList[$vid]['image']        = "http://share.yourhope.tv/".$video->code.'.jpg';
+                $videoList[$vid]['link']         = array(
+                                                    "download" => "http://share.yourhope.tv/".$video->code.'.mov',
+                                                    "watch"    => "https://www.youtube.com/watch?v=".$video->watch
                 );
-                $programVideo = $video->getProgram();
-                $videoList[$vid]['program'] = $programVideo->getCode();
-                $topVideo[] = $videoList[$vid];
+
+                $videoList[$vid]['program_id']   = $video->id;
+                $topVideo[]                      = $videoList[$vid];
+
                 unset($videoList[$vid]);
             }
-
-
-
 
         }
 
         $settings['categories'] = $categoriesList;
         unset($categoriesList);
         $publishTime = array();
-        $idVideo     = array();
-
 
         foreach($topVideo as $key=>$video){
             $publishTime[$key] = $video['publish_time'];
-            //$idVideo[$key]     = $video['id'];
 
         }
         array_multisort($publishTime, SORT_DESC, $topVideo);
+
         //  Получаем список Top Videos
         $settings['top_videos'] = $topVideo;
 

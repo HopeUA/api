@@ -51,7 +51,6 @@ class VideoController extends Controller
             $videoList = [];
             foreach($videos as $key=>$video){
                 $vid = $video->getId();
-                //$videoList[$key]['id'] = $vid;
                 $videoList[$key]['code'] = $video->getCode();
                 $videoList[$key]['title'] = $video->getTitle();
                 $videoList[$key]['desc'] = $video->getDescription();
@@ -66,10 +65,7 @@ class VideoController extends Controller
                 );
                 $programVideo = $video->getProgram();
                 $videoList[$key]['program'] = $programVideo->getCode();
-
-
             }
-
 
         }else{
             $videoListError = array(
@@ -77,9 +73,7 @@ class VideoController extends Controller
                 'message' => "Ошибка"
             );
 
-
         }
-
 
         if(empty($videoList)){
             $jsonVideos = json_encode($videoListError, JSON_UNESCAPED_UNICODE);
