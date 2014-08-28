@@ -1,2 +1,4 @@
 live:
-  stream: rtmp://91.90.23.69/live/livestream_1
+  hopeua:
+    rtmp: rtmp://91.90.23.69/live/livestream_1
+    hls: http://91.90.23.69:1935/live/livestream_1/playlist.m3u8

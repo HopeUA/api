@@ -43,8 +43,8 @@ class HomeController extends Controller
             printf("Unable to parse the YAML string: %s", $e->getMessage());
         }
 
-        foreach($liveStreams as $stream){
-            $settings['live'] = $stream;
+        foreach($liveStreams as $channel){
+            $settings['live'] = $channel;
         }
 
         //  Получаем список всех категорий
