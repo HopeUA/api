@@ -5,7 +5,7 @@ namespace Hope\RestBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Yaml\Parser;
+use Hope\RestBundle\Service\Home;
 
 
 class HomeController extends Controller
@@ -19,33 +19,10 @@ class HomeController extends Controller
         $settings = array();
 
         //  Получение списка баннеров
-        $settings['banners']=array();
-        $programs = $this->getDoctrine()
-            ->getRepository('HopeRestBundle:Banner')
-            ->findAll();
-
-        $bannersList = array();
-        foreach($programs as $key => $obj){
-            $bannersList[$key]['id']    = $obj->getId();
-            $bannersList[$key]['image'] = $obj->getImage();
-            $bannersList[$key]['url']   = $obj->getUrl();
-        }
-
-        $settings['banners'] = $bannersList;
-        unset($bannersList);
+        $settings['banners']=Home::bannersList();
 
         //  Получаем Live
-        $settings['live'] = array();
-        $yaml = new Parser();
-        try {
-            $liveStreams = $yaml->parse(file_get_contents(__DIR__.'/../Resources/config/main.yml'));
-        } catch (ParseException $e) {
-            printf("Unable to parse the YAML string: %s", $e->getMessage());
-        }
-
-        foreach($liveStreams as $channel){
-            $settings['live'] = $channel;
-        }
+        $settings['live'] = Home::liveStreams();
 
         //  Получаем список всех категорий
         $settings['categories']=array();
