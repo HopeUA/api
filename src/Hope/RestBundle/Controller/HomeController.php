@@ -6,7 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Yaml\Parser;
-
+use Hope\RestBundle\Entity\Program;
 
 class HomeController extends Controller
 {
@@ -58,30 +58,25 @@ class HomeController extends Controller
             );
 
         $categoriesList = array();
-        $videoList = array();
         $topVideo  = array();
+
         foreach($categories as $key => $obj){
             $categoriesList[$key]['id']       = $obj->getId();
             $categoriesList[$key]['title']    = $obj->getTitle();
-            $categoriesList[$key]['programs'] = array();
 
             $programs = $obj->getPrograms();
             $programsIds = array();
             foreach($programs as $keyProgr=>$program){
                 $programsIds[] = $program->getId();
-                $categoriesList[$key]['programs'][$keyProgr]['id']         = $program->getId();
-                $categoriesList[$key]['programs'][$keyProgr]['code']       = $program->getCode();
-                $categoriesList[$key]['programs'][$keyProgr]['title']      = $program->getTitle();
-                $categoriesList[$key]['programs'][$keyProgr]['desc_short'] = $program->getDescShort();
-                $categoriesList[$key]['programs'][$keyProgr]['desc_full']  = $program->getDescFull();
             }
 
             //получаем видео для программ из данной категории
             $catVideos = $this->getDoctrine()->getRepository('HopeRestBundle:Episode')
                         ->getTopTwoVideos($programsIds);
 
+            $videoList = [];
+            $vid = 0;
             foreach($catVideos as $video){
-                $vid                             = $video->id;
                 $videoList[$vid]['code']         = $video->code;
                 $videoList[$vid]['title']        = $video->title;
                 $videoList[$vid]['desc']         = $video->description;
@@ -96,22 +91,55 @@ class HomeController extends Controller
                 );
 
                 $videoList[$vid]['program']      = $video->program;
-                $topVideo[]                      = $videoList[$vid];
-
-                unset($videoList[$vid]);
+                $vid++;
             }
 
+            if ($obj->getTitle() == 'музыкальные') {
+                $topVideo[] = [
+                    'section' => 'main',
+                    'items'   => $videoList,
+                ];
+            }
+
+            $topVideo[] = [
+                'section' => $obj->getTitle(),
+                'items'   => $videoList,
+            ];
         }
 
         $settings['categories'] = $categoriesList;
         unset($categoriesList);
-        $publishTime = array();
 
+        // Programs
+        $programs = $this->getDoctrine()
+            ->getRepository('HopeRestBundle:Program')
+            ->findBy(
+                array(),
+                array('title' => 'ASC')
+            );
+        $programList = [];
+        /**
+         * @var Program $program
+         */
+        foreach($programs as $key => $program) {
+            $programList[$key]['code']  = $program->getCode();
+            $programList[$key]['title'] = $program->getTitle();
+            $programList[$key]['desc_short'] = $program->getDescShort();
+            $programList[$key]['desc_full']  = $program->getDescFull();
+            $programList[$key]['category_id']  = $program->getCategoryId();
+            $programList[$key]['image']  = 'http://hope.ua/images/programs/' . $program->getCode() . '.png';
+        }
+        $settings['programs'] = $programList;
+        unset($programList);
+
+        /*
+        $publishTime = array();
         foreach($topVideo as $key=>$video){
             $publishTime[$key] = $video['publish_time'];
 
         }
         array_multisort($publishTime, SORT_DESC, $topVideo);
+        */
 
         //  Получаем список Top Videos
         $settings['top_videos'] = $topVideo;

@@ -64,7 +64,7 @@ class EpisodeRepository extends EntityRepository
     public function getTopTwoVideos($ids = array()){
 
         $implodeIds = implode(',', $ids);
-        $sql = "SELECT e.* FROM (SELECT v.*, p.code as program FROM video v LEFT JOIN program p ON p.id = v.program_id WHERE v.program_id IN(".$implodeIds.") ORDER BY v.publish_time DESC) e GROUP by e.program_id ORDER by e.publish_time DESC LIMIT 0,2";
+        $sql = "SELECT e.* FROM (SELECT v.*, p.code as program FROM video v LEFT JOIN program p ON p.id = v.program_id WHERE v.program_id IN(".$implodeIds.") ORDER BY v.publish_time DESC) e ORDER by e.publish_time DESC LIMIT 0,2";
         $stmt = $this->getEntityManager()->getConnection()->prepare($sql);
         $stmt->execute();
         $results = $stmt->fetchAll();
