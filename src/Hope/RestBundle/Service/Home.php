@@ -3,6 +3,7 @@
 namespace Hope\RestBundle\Service;
 
 use Symfony\Component\Yaml\Parser;
+use Symfony\Component\Yaml\Exception\ParseException;
 
 class Home
 {
@@ -10,7 +11,7 @@ class Home
      * @return array $banners Returning the array of Banners
      */
     public static function bannersList(){
-
+        return [];
     }
 
     /**

@@ -112,6 +112,8 @@ class ImportCommand extends ContainerAwareCommand
         //записываем программы
         foreach($programList as $program){
 
+            $apiProgramId = null;
+
             //читаем категории API
             $apiProgram = $doctrine
                 ->getRepository('HopeRestBundle:Program', 'default')
