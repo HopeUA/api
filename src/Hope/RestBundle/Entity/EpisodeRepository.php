@@ -56,7 +56,8 @@ class EpisodeRepository extends EntityRepository
 
         $query->andWhere('e.publish_time <= :now')
               ->setParameter('now', new \DateTime());
-        $query->andWhere('e.watch <> ""');
+        $query->andWhere('e.watch <> :empty')
+              ->setParameter('empty', '');
         $query->orderBy('e.publish_time', 'DESC');
         $query->setMaxResults($quantity);
         $query->setFirstResult($offset);
