@@ -334,6 +334,7 @@ class ImportCommand extends ContainerAwareCommand
                     ->find($obj['id'])
                 ;
 
+                $apiTimeId = null;
                 if($apiTime != null){
                     $apiTimeId = $apiTime->getId();
                 }
