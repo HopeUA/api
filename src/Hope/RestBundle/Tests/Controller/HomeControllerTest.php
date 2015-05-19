@@ -126,7 +126,6 @@ class HomeControllerTest extends RestTestCase
         $this->assertObjectHasAttribute('title', $cat);
         $this->assertEquals('молодежные', $cat->title);
 
-        $this->assertObjectHasAttribute('programs', $cat);
         return $cat->programs;
     }
 

@@ -1,7 +1,7 @@
 parameters:
-#    hope_rest.example.class: Hope\RestBundle\Example
+    hope_rest.home.service.class: Hope\RestBundle\Service\HomeService
 
 services:
-#    hope_rest.example:
-#        class: %hope_rest.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]
+    hope.home.service:
+        class: %hope_rest.home.service.class%
+        arguments: ["@doctrine.orm.entity_manager"]

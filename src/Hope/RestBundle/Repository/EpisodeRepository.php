@@ -1,6 +1,6 @@
 <?php
 
-namespace Hope\RestBundle\Entity;
+namespace Hope\RestBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
