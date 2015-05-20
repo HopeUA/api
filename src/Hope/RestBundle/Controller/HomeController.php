@@ -12,15 +12,15 @@ class HomeController extends Controller
 
         $device = $request->get('device');
         $lang   = $request->get('lang');
-
+        $homeService = $this->get('hope.home.service');
         $settings = array();
-        $settings['banners'] = $this->get('hope.home.service')->getBannersList();
-        $settings['live'] = $this->get('hope.home.service')->getLiveStreams();
-        $data = $this->get('hope.home.service')->getCategories();
+        $settings['banners'] = $homeService->getBannersList();
+        $settings['live'] = $homeService->getLiveStreams();
+        $data = $homeService->getCategories();
         $settings['categories'] = $data['categoryList'];
         $settings['top_videos'] = $data['topVideo'];
-        $settings['programs'] = $this->get('hope.home.service')->getPrograms();
-        $settings['about'] = $this->get('hope.home.service')->getPageList();
+        $settings['programs'] = $homeService->getPrograms();
+        $settings['about'] = $homeService->getPageList();
 
         // формат JSON
         $settingsJSON = json_encode($settings, JSON_UNESCAPED_UNICODE);

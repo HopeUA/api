@@ -145,7 +145,7 @@ class HomeControllerTest extends RestTestCase
      * }
      *
      * @large
-     * @depends restRequest
+     * @depends testRequest
      */
     public function testPrograms($data)
     {
@@ -154,15 +154,16 @@ class HomeControllerTest extends RestTestCase
 
         $this->assertInternalType('array', $programs);
 
-        $program = $programs[0];
+        $program = $programs[4];
         $this->assertInstanceOf('stdClass', $program);
-
         $original = [
-            'id'          => 7,
-            'code'        => 'CYCU',
-            'title'       => 'Поспілкуймося',
-            'desc_short'  => 'Молодіжне ток-шоу на теми, які найбільше хвилюють молодь. Це відкритий діалог молодих людей та досвідчених духовних лідерів.',
-            'desc_full'   => ''
+            'code' => 'CYCU',
+            'title' => 'Поспілкуймося',
+            'desc_short' => 'Молодіжне ток-шоу на теми, які найбільше хвилюють молодь. Це відкритий діалог молодих людей та досвідчених духовних лідерів.',
+            'desc_full' => '',
+            'category_id' => 1,
+            'image' => 'http://hope.ua/images/programs/CYCU.png'
+
         ];
         $original = json_decode(json_encode($original));
         $this->assertEquals($original, $program);
