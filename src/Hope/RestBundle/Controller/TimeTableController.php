@@ -6,10 +6,18 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Hope\RestBundle\Service\Tools;
 
-
-
+/**
+ * Class TimeTableController
+ * @package Hope\RestBundle\Controller
+ */
 class TimeTableController extends Controller
 {
+    /**
+     * Index Action
+     *
+     * @param Request $request
+     * @return Response
+     */
     public function indexAction(Request $request){
         $dateRequest = $request->get('date');
         if(strlen($dateRequest) >= 10 ){
@@ -20,46 +28,13 @@ class TimeTableController extends Controller
             $dateRequest = date("Y-m-d");
         }
         
-        if(Tools::validateDate($dateRequest, 'Y-m-d')){
-            $params = array();
-            $dateExplode = explode('-', $dateRequest);
-            $params['date_from'] = $dateExplode[0].'-'.$dateExplode[1].'-'.$dateExplode[2].' 00:00:00';
-            $params['date_to'] = $dateExplode[0].'-'.$dateExplode[1].'-'.$dateExplode[2].' 23:59:59';
-        }
+        $timeTable = $this->get('hope.timetable.service')->getTimeTableForDate($dateRequest);
 
-        if(!empty($params)){
-            $query = $this->getDoctrine()->getManager()->createQueryBuilder();
-            $query
-                ->select('s')
-                ->from('HopeRestBundle:Schedule', 's');
-            $query->andWhere('s.issue_time >= :date_from');
-            $query->setParameter('date_from',$params['date_from']);
-            $query->andWhere('s.issue_time <= :date_to');
-            $query->setParameter('date_to',$params['date_to']);
-            //$query->orderBy('s.issue_time', 'ASC');
-            $issues = $query->getQuery()->getResult();
-
-
-            $issueList = array();
-            $timeTable   = array();
-            foreach($issues as $issue){
-                $key = $issue->getId();
-                $issueList['datetime'] = $issue->getIssueTime()->format("Y-m-d H:i:s");
-                $issueList['program']  = $issue->getProgram();
-                $issueList['episode']  = $issue->getEpisode();
-                $timeTable[]   = $issueList;
-            }
-        }
         if(empty($timeTable)){
             $noTimeTable = array(
                 'error' => true,
                 'message' => 'Не нашлось записей на эту дату'
             );
-        }
-
-
-
-        if(empty($timeTable)){
             $jsonIssues = json_encode($noTimeTable, JSON_UNESCAPED_UNICODE);
             $response = new Response($jsonIssues, 404);
             $response->headers->set('Content-Type', 'application/json; charset=utf8');

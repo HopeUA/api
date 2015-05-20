@@ -156,6 +156,7 @@ class HomeControllerTest extends RestTestCase
 
         $program = $programs[4];
         $this->assertInstanceOf('stdClass', $program);
+
         $original = [
             'code' => 'CYCU',
             'title' => 'Поспілкуймося',

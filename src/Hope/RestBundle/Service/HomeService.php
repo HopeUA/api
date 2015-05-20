@@ -5,6 +5,12 @@ namespace Hope\RestBundle\Service;
 use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Yaml\Exception\ParseException;
 
+/**
+ * Home Service
+ *
+ * Class HomeService
+ * @package Hope\RestBundle\Service
+ */
 class HomeService
 {
     private $entityManager;
@@ -65,6 +71,12 @@ class HomeService
         return $live;
     }
 
+    /**
+     * Get Categories
+     *
+     * @return array
+     * @throws \Exception
+     */
     public function getCategories()
     {
         $categories = $this->entityManager
@@ -140,6 +152,12 @@ class HomeService
         );
     }
 
+    /**
+     * Get Programs
+     *
+     * @return array
+     * @throws \Exception
+     */
     public function getPrograms()
     {
         $programs = $this->entityManager
@@ -164,6 +182,11 @@ class HomeService
         return $programList;
     }
 
+    /**
+     * Get Page List
+     *
+     * @return array
+     */
     public function getPageList()
     {
         $pages = $this->entityManager

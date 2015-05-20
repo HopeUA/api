@@ -1,7 +1,12 @@
 parameters:
     hope_rest.home.service.class: Hope\RestBundle\Service\HomeService
+    hope_rest.timetable.service.class: Hope\RestBundle\Service\TimeTableService
 
 services:
     hope.home.service:
         class: %hope_rest.home.service.class%
+        arguments: ["@doctrine.orm.entity_manager"]
+
+    hope.timetable.service:
+        class: %hope_rest.timetable.service.class%
         arguments: ["@doctrine.orm.entity_manager"]

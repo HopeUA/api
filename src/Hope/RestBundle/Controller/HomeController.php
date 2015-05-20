@@ -10,8 +10,10 @@ class HomeController extends Controller
 {
     public function indexAction(Request $request){
 
-        $device = $request->get('device');
-        $lang   = $request->get('lang');
+        //These parameters will be used in next version
+        $device = $request->query->get('device');
+        $lang   = $request->query->get('lang');
+
         $homeService = $this->get('hope.home.service');
         $settings = array();
         $settings['banners'] = $homeService->getBannersList();
