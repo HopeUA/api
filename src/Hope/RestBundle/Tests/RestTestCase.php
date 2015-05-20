@@ -6,6 +6,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class RestTestCase extends WebTestCase
 {
+    protected function getPrograms($category)
+    {
+        $programs = [];
+        $programs[1] = [
+
+        ];
+    }
     protected function getEpisode($code, $convertToObject = true)
     {
         $episodes = [];

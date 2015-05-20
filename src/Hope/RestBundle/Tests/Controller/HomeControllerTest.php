@@ -125,8 +125,6 @@ class HomeControllerTest extends RestTestCase
 
         $this->assertObjectHasAttribute('title', $cat);
         $this->assertEquals('молодежные', $cat->title);
-
-        return $cat->programs;
     }
 
     /**
@@ -147,10 +145,13 @@ class HomeControllerTest extends RestTestCase
      * }
      *
      * @large
-     * @depends testCategories
+     * @depends restRequest
      */
-    public function testPrograms($programs)
+    public function testPrograms($data)
     {
+        $this->assertObjectHasAttribute('programs', $data);
+        $programs = $data->programs;
+
         $this->assertInternalType('array', $programs);
 
         $program = $programs[0];
@@ -202,11 +203,11 @@ class HomeControllerTest extends RestTestCase
         $videos = $data->top_videos;
 
         $this->assertInternalType('array', $videos);
-        $this->assertEquals(6, count($videos));
+        $this->assertLessThanOrEqual(6, count($videos));
+        $videoList = $videos[0]->items;
 
-        $this->assertEquals($this->getEpisode('HDVU01612'), $videos[0]);
-        $this->assertEquals($this->getEpisode('FBNU00512'), $videos[1]);
-        $this->assertEquals($this->getEpisode('CYCU00112'), $videos[4]);
+        $this->assertEquals($this->getEpisode('FBNU00512'), $videoList[0]);
+        $this->assertEquals($this->getEpisode('FBNU00312'), $videoList[1]);
     }
 
     /**
