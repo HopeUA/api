@@ -1,5 +1,4 @@
 <?php
-// src/Hope/RestBundle/Entity/Category.php
 namespace Hope\RestBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -9,7 +8,8 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\Entity
  * @ORM\Table(name="category")
  */
-class Category {
+class Category
+{
 
     /**
      * @ORM\Column(type="integer")
@@ -86,7 +86,7 @@ class Category {
     /**
      * Set sort
      *
-     * @param string $order
+     * @param string $sort
      * @return Category
      */
     public function setSort($sort)
@@ -119,10 +119,10 @@ class Category {
     /**
      * Add programs
      *
-     * @param \Hope\RestBundle\Entity\Program $programs
+     * @param Program $programs
      * @return Category
      */
-    public function addProgram(\Hope\RestBundle\Entity\Program $programs)
+    public function addProgram(Program $programs)
     {
         $this->programs[] = $programs;
 
@@ -132,9 +132,9 @@ class Category {
     /**
      * Remove programs
      *
-     * @param \Hope\RestBundle\Entity\Program $programs
+     * @param Program $programs
      */
-    public function removeProgram(\Hope\RestBundle\Entity\Program $programs)
+    public function removeProgram(Program $programs)
     {
         $this->programs->removeElement($programs);
     }

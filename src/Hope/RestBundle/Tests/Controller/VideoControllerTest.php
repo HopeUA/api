@@ -31,6 +31,8 @@ class VideoControllerTest extends RestTestCase
     }
 
     /**
+     * @param string $code
+     * @param bool $exists
      * @dataProvider episodeCodeProvider
      */
     public function testByCode($code, $exists)
@@ -85,6 +87,8 @@ class VideoControllerTest extends RestTestCase
     }
 
     /**
+     * @param string $code
+     * @param bool $exists
      * @dataProvider programCodeProvider
      */
     public function testByProgramCode($code, $exists)
@@ -140,6 +144,8 @@ class VideoControllerTest extends RestTestCase
         ];
     }
     /**
+     * @param int $id
+     * @param bool $exists
      * @dataProvider programCategoryProvider
      */
     public function testByProgramCategory($id, $exists)
@@ -203,6 +209,8 @@ class VideoControllerTest extends RestTestCase
         ];
     }
     /**
+     * @param string $text
+     * @param string $code
      * @dataProvider textSearchProvider
      */
     public function testByText($text, $code)
@@ -257,6 +265,8 @@ class VideoControllerTest extends RestTestCase
         ];
     }
     /**
+     * @param $limit
+     * @param string $code
      * @dataProvider limitProvider
      */
     public function testLimit($limit, $code)

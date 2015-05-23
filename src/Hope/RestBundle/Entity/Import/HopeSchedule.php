@@ -8,7 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Table(name="hope_programs")
  */
-class HopeSchedule {
+class HopeSchedule
+{
 
     /**
      * @ORM\Column(type="integer")

@@ -4,16 +4,11 @@ namespace Hope\RestBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
 
 class HomeController extends Controller
 {
-    public function indexAction(Request $request){
-
-        //These parameters will be used in next version
-        $device = $request->query->get('device');
-        $lang   = $request->query->get('lang');
-
+    public function indexAction()
+    {
         $homeService = $this->get('hope.home.service');
         $settings = array();
         $settings['banners'] = $homeService->getBannersList();
@@ -27,16 +22,15 @@ class HomeController extends Controller
         // формат JSON
         $settingsJSON = json_encode($settings, JSON_UNESCAPED_UNICODE);
 
-        if(empty($settings)){
+        if (empty($settings)) {
             $response = new Response($settingsJSON, 404);
             $response->headers->set('Content-Type', 'application/json; charset=utf8');
 
-        }else{
+        } else {
             $response = new Response($settingsJSON);
             $response->headers->set('Content-Type', 'application/json; charset=utf8');
         }
 
         return $response;
     }
-
 }

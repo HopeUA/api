@@ -4,6 +4,7 @@ namespace Hope\RestBundle\Service;
 
 use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Yaml\Exception\ParseException;
+use Doctrine\ORM\EntityManager;
 
 /**
  * Home Service
@@ -15,7 +16,7 @@ class HomeService
 {
     private $entityManager;
 
-    public function __construct(\Doctrine\ORM\EntityManager $entityManager)
+    public function __construct(EntityManager $entityManager)
     {
         $this->entityManager = $entityManager;
     }
@@ -26,8 +27,8 @@ class HomeService
      * @return array
      * @throws \Exception
      */
-    public function getBannersList(){
-
+    public function getBannersList()
+    {
         $banners = $this->entityManager
             ->getRepository('HopeRestBundle:Banner')
             ->findAll();
@@ -52,8 +53,8 @@ class HomeService
      * @return array
      * @throws \Exception
      */
-    public function getLiveStreams(){
-
+    public function getLiveStreams()
+    {
         $liveStreams = array();
         $yaml = new Parser();
         try {
@@ -63,7 +64,7 @@ class HomeService
         }
 
         $live = array();
-        if(is_array($liveStreams) && isset($liveStreams['live']['hopeua'])) {
+        if (is_array($liveStreams) && isset($liveStreams['live']['hopeua'])) {
             $live['stream'] = $liveStreams['live']['hopeua'];
         } else {
             throw new \Exception('LiveStreams: Array expected but got '.gettype($liveStreams).' type');
@@ -194,7 +195,7 @@ class HomeService
             ->findAll();
 
         $pageList = array();
-        foreach($pages as $key => $obj){
+        foreach ($pages as $key => $obj) {
             $pageList[$key]['id']      = $obj->getId();
             $pageList[$key]['section'] = $obj->getSection();
             $pageList[$key]['title']   = $obj->getTitle();

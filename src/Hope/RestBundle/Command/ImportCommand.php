@@ -9,7 +9,6 @@ use Hope\RestBundle\Entity\Program;
 use Hope\RestBundle\Entity\Episode;
 use Hope\RestBundle\Entity\Schedule;
 
-
 class ImportCommand extends ContainerAwareCommand
 {
 
@@ -28,7 +27,7 @@ class ImportCommand extends ContainerAwareCommand
         $em        = $doctrine->getManager();
         $em_import = $doctrine->getManager('dbimport');
 
-        $time_start = $this->microtime_float();
+        $time_start = $this->microtimeFloat();
 
         $output->writeln('DB Connected.');
 
@@ -43,7 +42,7 @@ class ImportCommand extends ContainerAwareCommand
 
         $categoryList    = array();
         $allCategoriesId = array();
-        foreach($categories as $key => $obj){
+        foreach ($categories as $key => $obj) {
             $allCategoriesId[]             = $obj->getCId();
             $categoryList[$key]['c_id']    = $obj->getCId();
             $categoryList[$key]['c_name']  = $obj->getCName();
@@ -51,31 +50,31 @@ class ImportCommand extends ContainerAwareCommand
         }
 
         //записываем категории
-        foreach($categoryList as $category){
+        foreach ($categoryList as $category) {
 
             //читаем категории API
             $apiCategory = $doctrine
                 ->getRepository('HopeRestBundle:Category', 'default')
                 ->find($category['c_id'])
             ;
-            if($apiCategory!=null){
+            if ($apiCategory!=null) {
                 $apiCategoryId = $apiCategory->getId();
             }
-            if(empty($apiCategoryId)){
+            if (empty($apiCategoryId)) {
                 $categoryEntity = new Category();
                 $categoryEntity->setId($category['c_id']);
                 $categoryEntity->setTitle($category['c_name']);
                 $categoryEntity->setSort($category['c_order']);
                 $em->persist($categoryEntity);
 
-            }else{
+            } else {
                 $catTitle = $apiCategory->getTitle();
                 $catSort  = $apiCategory->getSort();
 
-                if($catTitle != $category['c_name'] && !empty($category['c_name'])){
+                if ($catTitle != $category['c_name'] && !empty($category['c_name'])) {
                     $apiCategory->setTitle($category['c_name']);
                 }
-                if($catSort != $category['c_order'] && !empty($category['c_order'])){
+                if ($catSort != $category['c_order'] && !empty($category['c_order'])) {
                     $apiCategory->setSort($category['c_order']);
                 }
             }
@@ -95,8 +94,8 @@ class ImportCommand extends ContainerAwareCommand
 
         $programList   = array();
         $allProgramsCode = array();
-        foreach($programs as $key => $obj){
-            if(mb_strlen($obj->getCatAlias())!=4) {
+        foreach ($programs as $key => $obj) {
+            if (mb_strlen($obj->getCatAlias())!=4) {
                 //пропускаем программу если код программы не равен 4
                 continue;
             }
@@ -110,7 +109,7 @@ class ImportCommand extends ContainerAwareCommand
         }
 
         //записываем программы
-        foreach($programList as $program){
+        foreach ($programList as $program) {
 
             $apiProgramId = null;
 
@@ -120,11 +119,11 @@ class ImportCommand extends ContainerAwareCommand
                 ->findOneByCode($program['cat_alias'])
             ;
 
-            if($apiProgram != null){
+            if ($apiProgram != null) {
                 $apiProgramId = $apiProgram->getId();
             }
 
-            if(empty($apiProgramId)){
+            if (empty($apiProgramId)) {
                 $programEntity = new Program();
                 $programEntity->setId($program['cat_id']);
                 $programEntity->setCode($program['cat_alias']);
@@ -139,26 +138,26 @@ class ImportCommand extends ContainerAwareCommand
 
                 $em->persist($programEntity);
 
-            }else{
+            } else {
                 $programCode        = $apiProgram->getCode();
                 $programTitle       = $apiProgram->getTitle();
                 $programDescShort   = $apiProgram->getDescShort();
                 $programDescFull    = $apiProgram->getDescFull();
                 $programCategory    = $apiProgram->getCategory()->getId();
 
-                if($programCode != $program['cat_alias'] && !empty($program['cat_alias'])){
+                if ($programCode != $program['cat_alias'] && !empty($program['cat_alias'])) {
                     $apiProgram->setCode($program['cat_alias']);
                 }
-                if($programTitle != $program['cat_name'] && !empty($program['cat_name'])){
+                if ($programTitle != $program['cat_name'] && !empty($program['cat_name'])) {
                     $apiProgram->setTitle($program['cat_name']);
                 }
-                if($programDescShort != $program['cat_shortdesc'] && !empty($program['cat_shortdesc'])){
+                if ($programDescShort != $program['cat_shortdesc'] && !empty($program['cat_shortdesc'])) {
                     $apiProgram->setDescShort($program['cat_shortdesc']);
                 }
-                if($programDescFull != $program['cat_desc'] && !empty($program['cat_desc'])){
+                if ($programDescFull != $program['cat_desc'] && !empty($program['cat_desc'])) {
                     $apiProgram->setDescFull($program['cat_desc']);
                 }
-                if($programCategory != $program['cat_category'] && !empty($program['cat_category'])){
+                if ($programCategory != $program['cat_category'] && !empty($program['cat_category'])) {
                     $parent = $doctrine
                         ->getRepository('HopeRestBundle:Category')
                         ->find($program['cat_category'])
@@ -175,10 +174,17 @@ class ImportCommand extends ContainerAwareCommand
         //читаем видео
         $offset      = 0;
         $allVideosId = array();
-        while($videos = $doctrine->getRepository('HopeImport:HopeVideo', 'dbimport')->findBy(array(), array('v_id'=>'ASC'),1000, $offset)){
+        while (
+            $videos = $doctrine->getRepository('HopeImport:HopeVideo', 'dbimport')->findBy(
+                array(),
+                array('v_id'=>'ASC'),
+                1000,
+                $offset
+            )
+        ) {
             $key       = 0;
             $videoList = array();
-            foreach($videos as $obj){
+            foreach ($videos as $obj) {
                 $allVideosId[]               = $obj->getVId();
                 $videoList[$key]['v_id']     = $obj->getVId();
                 $videoList[$key]['v_serial'] = $obj->getVSerial();
@@ -194,7 +200,7 @@ class ImportCommand extends ContainerAwareCommand
             }
 
             //записываем видео
-            foreach($videoList as $video){
+            foreach ($videoList as $video) {
 
                 $videoParent = $doctrine
                     ->getRepository('HopeRestBundle:Program')
@@ -202,7 +208,7 @@ class ImportCommand extends ContainerAwareCommand
                 ;
 
                 //если нет родительской программы - не записывать в БД
-                if(empty($videoParent)){
+                if (empty($videoParent)) {
                     continue;
                 }
 
@@ -211,12 +217,12 @@ class ImportCommand extends ContainerAwareCommand
                     ->findOneByCode($video['v_serial'])
                 ;
                 unset($apiVideoId);
-                if($apiVideo != null){
+                if ($apiVideo != null) {
                     $apiVideoId = $apiVideo->getId();
                 }
 
 
-                if(empty($apiVideoId)){
+                if (empty($apiVideoId)) {
                     $videoEntity = new Episode();
 
                     $videoEntity->setProgram($videoParent);
@@ -232,7 +238,7 @@ class ImportCommand extends ContainerAwareCommand
                     $videoEntity->setWatch($video['youtube']);
 
                     $em->persist($videoEntity);
-                }else{
+                } else {
                     $videoCode        = $apiVideo->getCode();
                     $videoTitle       = $apiVideo->getTitle();
                     $videoDesc        = $apiVideo->getDescription();
@@ -245,37 +251,35 @@ class ImportCommand extends ContainerAwareCommand
                     $videoDate        = date("Y-m-d H:i:s", $video['v_time']);
                     $vTime            = new \DateTime($videoDate);
 
-                    if($videoCode != $video['v_serial'] && !empty($video['v_serial'])){
+                    if ($videoCode != $video['v_serial'] && !empty($video['v_serial'])) {
                         $apiVideo->setCode($video['v_serial']);
                     }
-                    if($videoTitle != $video['v_name'] && !empty($video['v_name'])){
+                    if ($videoTitle != $video['v_name'] && !empty($video['v_name'])) {
                         $apiVideo->setTitle($video['v_name']);
                     }
-                    if($videoDesc != $video['v_desc'] && !empty($video['v_desc'])){
+                    if ($videoDesc != $video['v_desc'] && !empty($video['v_desc'])) {
                         $apiVideo->setDescription($video['v_desc']);
                     }
-                    if($videoAuthor != $video['v_author'] && !empty($video['v_author'])){
+                    if ($videoAuthor != $video['v_author'] && !empty($video['v_author'])) {
                         $apiVideo->setAuthor($video['v_author']);
                     }
-                    if($videoDuration != $video['duration'] && !empty($video['duration'])){
+                    if ($videoDuration != $video['duration'] && !empty($video['duration'])) {
                         $apiVideo->setDuration($video['duration']);
                     }
-                    if($videoPublishTime != $vTime && !empty($vTime)){
+                    if ($videoPublishTime != $vTime && !empty($vTime)) {
                         $newTime = new \DateTime(date("Y-m-d H:i:s", $video['v_time']));
                         $apiVideo->setPublishTime($newTime);
                     }
-                    if($videoHd != $video['v_wide'] && !empty($video['v_wide'])){
+                    if ($videoHd != $video['v_wide'] && !empty($video['v_wide'])) {
                         $apiVideo->setHd($video['v_wide']);
                     }
-                    if($videoWatch != $video['youtube'] && !empty($video['youtube'])){
+                    if ($videoWatch != $video['youtube'] && !empty($video['youtube'])) {
                         $apiVideo->setWatch($video['youtube']);
                     }
 
-                    if($videoProgram != $videoParent && !empty($videoParent)){
+                    if ($videoProgram != $videoParent && !empty($videoParent)) {
                         $apiVideo->setProgram($videoParent);
                     }
-
-
                 }
             }
 
@@ -298,8 +302,7 @@ class ImportCommand extends ContainerAwareCommand
         $qb->delete('HopeRestBundle:Category', 'c')
            ->where($qb->expr()->notIn('c.id', $allCategoriesId));
         $qb->getQuery()->execute();
-
-
+        
         $output->writeln('');
         $output->writeln('Schedule Read Started');
 
@@ -309,11 +312,16 @@ class ImportCommand extends ContainerAwareCommand
         $allSchedulesId = array();
 
         $qb = $em_import->createQueryBuilder();
-        while($schedules = $qb->select('s')->from('HopeImport:HopeSchedule','s')->where('s.ptime >= :ptime')->setParameters(array('ptime' => $ptime7days->format('Y-m-d H:i:s')))
-            ->setMaxResults(1000)->setFirstResult($offset)->getQuery()->getResult()){
+        while (
+            $schedules = $qb
+                ->select('s')
+                ->from('HopeImport:HopeSchedule', 's')
+                ->where('s.ptime >= :ptime')
+                ->setParameters(array('ptime' => $ptime7days->format('Y-m-d H:i:s')))
+            ->setMaxResults(1000)->setFirstResult($offset)->getQuery()->getResult()) {
             $key = 0;
             $timeList = array();
-            foreach($schedules as $obj){
+            foreach ($schedules as $obj) {
                 $allSchedulesId[]               = $obj->getId();
                 $timeList[$key]['id']           = $obj->getId();
                 $timeList[$key]['program']      = $obj->getProgram();
@@ -327,7 +335,7 @@ class ImportCommand extends ContainerAwareCommand
             }
 
             //записываем расписание
-            foreach($timeList as $obj){
+            foreach ($timeList as $obj) {
 
                 $apiTime = $doctrine
                     ->getRepository('HopeRestBundle:Schedule')
@@ -335,32 +343,30 @@ class ImportCommand extends ContainerAwareCommand
                 ;
 
                 $apiTimeId = null;
-                if($apiTime != null){
+                if ($apiTime != null) {
                     $apiTimeId = $apiTime->getId();
                 }
-                if(empty($apiTimeId)){
+                if (empty($apiTimeId)) {
                     $timeEntity = new Schedule();
-
                     $timeEntity->setId($obj['id']);
                     $timeEntity->setIssueTime($obj['ptime']);
                     $timeEntity->setProgram($obj['series']);
                     $timeEntity->setEpisode($obj['program']);
-
                     $em->persist($timeEntity);
-                }else{
+                } else {
                     $timeIssueTime  = $apiTime->getIssueTime();
                     $timeProgram    = $apiTime->getProgram();
                     $timeEpisode    = $apiTime->getEpisode();
 
-                    if($timeIssueTime != $obj['ptime'] && !empty($obj['ptime'])){
+                    if ($timeIssueTime != $obj['ptime'] && !empty($obj['ptime'])) {
                         $apiTime->setIssueTime($obj['ptime']);
                     }
 
-                    if($timeProgram != $obj['series'] && !empty($obj['series'])){
+                    if ($timeProgram != $obj['series'] && !empty($obj['series'])) {
                         $apiTime->setProgram($obj['series']);
                     }
 
-                    if($timeEpisode != $obj['program'] && !empty($obj['program'])){
+                    if ($timeEpisode != $obj['program'] && !empty($obj['program'])) {
                         $apiTime->setEpisode($obj['program']);
                     }
 
@@ -378,18 +384,16 @@ class ImportCommand extends ContainerAwareCommand
            ->where($qb->expr()->notIn('s.id', $allSchedulesId));
         $qb->getQuery()->execute();
 
-        $time_end = $this->microtime_float();
+        $time_end = $this->microtimeFloat();
 
         $output->writeln('');
         $output->writeln('<info>Successfully Finished in '.($time_end-$time_start).' s</info>');
 
     }
 
-    protected function microtime_float()
+    protected function microtimeFloat()
     {
         list($usec, $sec) = explode(" ", microtime());
         return ((float)$usec + (float)$sec);
     }
-
-
 }

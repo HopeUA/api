@@ -1,6 +1,7 @@
 parameters:
     hope_rest.home.service.class: Hope\RestBundle\Service\HomeService
     hope_rest.timetable.service.class: Hope\RestBundle\Service\TimeTableService
+    hope_rest.video.service.class: Hope\RestBundle\Service\VideoService
 
 services:
     hope.home.service:
@@ -9,4 +10,8 @@ services:
 
     hope.timetable.service:
         class: %hope_rest.timetable.service.class%
+        arguments: ["@doctrine.orm.entity_manager"]
+
+    hope.video.service:
+        class: %hope_rest.video.service.class%
         arguments: ["@doctrine.orm.entity_manager"]

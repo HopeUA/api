@@ -9,7 +9,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="video")
  * @ORM\Entity(repositoryClass="Hope\RestBundle\Repository\EpisodeRepository")
  */
-class Episode {
+class Episode
+{
 
         /**
          * @ORM\Column(type="integer")
@@ -142,7 +143,7 @@ class Episode {
     /**
      * Set description
      *
-     * @param string $desc
+     * @param string $description
      * @return Episode
      */
     public function setDescription($description)
@@ -303,10 +304,10 @@ class Episode {
     /**
      * Set program
      *
-     * @param \Hope\RestBundle\Entity\Program $program
+     * @param Program $program
      * @return Episode
      */
-    public function setProgram(\Hope\RestBundle\Entity\Program $program = null)
+    public function setProgram(Program $program = null)
     {
         $this->program = $program;
 
@@ -316,7 +317,7 @@ class Episode {
     /**
      * Get program
      *
-     * @return \Hope\RestBundle\Entity\Program 
+     * @return Program
      */
     public function getProgram()
     {

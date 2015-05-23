@@ -4,7 +4,6 @@ namespace Hope\RestBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Hope\RestBundle\Service\Tools;
 
 /**
  * Class TimeTableController
@@ -18,19 +17,20 @@ class TimeTableController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function indexAction(Request $request){
+    public function indexAction(Request $request)
+    {
         $dateRequest = $request->get('date');
-        if(strlen($dateRequest) >= 10 ){
+        if (strlen($dateRequest) >= 10) {
             $dateRequest = strtotime($dateRequest);
             $dateRequest = date("Y-m-d", $dateRequest);
         }
-        if(empty($dateRequest)){
+        if (empty($dateRequest)) {
             $dateRequest = date("Y-m-d");
         }
         
         $timeTable = $this->get('hope.timetable.service')->getTimeTableForDate($dateRequest);
 
-        if(empty($timeTable)){
+        if (empty($timeTable)) {
             $noTimeTable = array(
                 'error' => true,
                 'message' => 'Не нашлось записей на эту дату'
@@ -39,15 +39,12 @@ class TimeTableController extends Controller
             $response = new Response($jsonIssues, 404);
             $response->headers->set('Content-Type', 'application/json; charset=utf8');
 
-        }else{
+        } else {
             $jsonIssues = json_encode($timeTable, JSON_UNESCAPED_UNICODE);
             $response = new Response($jsonIssues);
             $response->headers->set('Content-Type', 'application/json; charset=utf8');
         }
 
         return $response;
-
     }
-
-
-} 
+}

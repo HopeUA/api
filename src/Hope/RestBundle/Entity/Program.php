@@ -1,5 +1,4 @@
 <?php
-// src/Acme/StoreBundle/Entity/Program.php
 namespace Hope\RestBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -9,7 +8,8 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\Entity
  * @ORM\Table(name="program")
  */
-class Program {
+class Program
+{
 
     /**
      * @ORM\Column(type="integer")
@@ -212,10 +212,10 @@ class Program {
     /**
      * Set category
      *
-     * @param \Hope\RestBundle\Entity\Category $category
+     * @param Category $category
      * @return Program
      */
-    public function setCategory(\Hope\RestBundle\Entity\Category $category = null)
+    public function setCategory(Category $category = null)
     {
         $this->category = $category;
 
@@ -225,10 +225,10 @@ class Program {
     /**
      * Add videos
      *
-     * @param \Hope\RestBundle\Entity\Episode $videos
+     * @param Episode $videos
      * @return Program
      */
-    public function addVideo(\Hope\RestBundle\Entity\Episode $videos)
+    public function addVideo(Episode $videos)
     {
         $this->videos[] = $videos;
 
@@ -238,9 +238,9 @@ class Program {
     /**
      * Remove videos
      *
-     * @param \Hope\RestBundle\Entity\Episode $videos
+     * @param Episode $videos
      */
-    public function removeVideo(\Hope\RestBundle\Entity\Episode $videos)
+    public function removeVideo(Episode $videos)
     {
         $this->videos->removeElement($videos);
     }

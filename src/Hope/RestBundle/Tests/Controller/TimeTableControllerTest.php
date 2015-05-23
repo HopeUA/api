@@ -41,6 +41,7 @@ class TimeTableControllerTest extends RestTestCase
     }
 
     /**
+     * @param string $date
      * @dataProvider badDateProvider
      */
     public function testNotFoundDate($date)

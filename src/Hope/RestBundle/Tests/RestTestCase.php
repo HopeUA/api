@@ -2,11 +2,10 @@
 namespace Hope\RestBundle\Tests;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class RestTestCase extends WebTestCase
 {
-    protected function getPrograms($category)
+    protected function getPrograms()
     {
         $programs = [];
         $programs[1] = [
@@ -170,6 +169,5 @@ class RestTestCase extends WebTestCase
         }
 
         return $error;
-
     }
 }

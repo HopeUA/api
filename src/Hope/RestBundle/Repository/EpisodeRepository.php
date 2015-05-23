@@ -15,13 +15,13 @@ class EpisodeRepository extends EntityRepository
 
 
         //код видео
-        if(!empty($params['code'])){
+        if (!empty($params['code'])) {
             $query->andWhere('e.code = :code');
             $query->setParameter('code', $params['code']);
         }
 
         //код программы
-        if(!empty($params['program_code'])){
+        if (!empty($params['program_code'])) {
                 $query->leftjoin('HopeRestBundle:Program', 'p', 'WITH', 'e.program_id = p.id');
                 $query->andWhere('p.code = :pcode');
                 $query->setParameter('pcode', $params['program_code']);
@@ -29,16 +29,16 @@ class EpisodeRepository extends EntityRepository
         }
 
         //код категории
-        if(!empty($params['program_category'])) {
-            if(empty($params['program_code'])){
+        if (!empty($params['program_category'])) {
+            if (empty($params['program_code'])) {
                 $query->leftjoin('HopeRestBundle:Program', 'p', 'WITH', 'e.program_id = p.id');
             }
             $query->andWhere('p.category_id = :category');
-            $query->setParameter('category',$params['program_category']);
+            $query->setParameter('category', $params['program_category']);
         }
 
         //поиск по тексту
-        if(!empty($params['text'])) {
+        if (!empty($params['text'])) {
             $query->andWhere(
                 $query->expr()->orX(
                     $query->expr()->like('e.title', ':text'),
@@ -46,11 +46,11 @@ class EpisodeRepository extends EntityRepository
                     $query->expr()->like('e.author', ':text')
                 )
             );
-            $query->setParameter('text','%'.$params['text'].'%');
+            $query->setParameter('text', '%'.$params['text'].'%');
 
         }
 
-        $limit              = explode('|',$params['limit']);
+        $limit              = explode('|', $params['limit']);
         $offset             = $limit[0]; // начинаем считывать с N записи
         $quantity           = $limit[1]; // количество выбираемых записей
 
@@ -65,15 +65,18 @@ class EpisodeRepository extends EntityRepository
         return $results;
     }
 
-    public function getTopTwoVideos($ids = array()){
+    public function getTopTwoVideos($ids = array())
+    {
 
         $implodeIds = implode(',', $ids);
-        $sql = "SELECT e.* FROM (SELECT v.*, p.code as program FROM video v LEFT JOIN program p ON p.id = v.program_id WHERE v.program_id IN(".$implodeIds.") AND v.publish_time <= NOW() AND v.watch <> '' ORDER BY v.publish_time DESC) e ORDER by e.publish_time DESC LIMIT 0,2";
+        $sql = "SELECT e.* FROM (SELECT v.*, p.code as program FROM video v LEFT JOIN program p ON p.id = v.program_id
+                WHERE v.program_id IN(".$implodeIds.") AND v.publish_time <= NOW() AND v.watch <> ''
+                ORDER BY v.publish_time DESC) e ORDER by e.publish_time DESC LIMIT 0,2";
         $stmt = $this->getEntityManager()->getConnection()->prepare($sql);
         $stmt->execute();
         $results = $stmt->fetchAll();
 
-        foreach ($results as $key=>$result){
+        foreach ($results as $key => $result) {
             $results[$key]['duration'] = intval($result['duration']);
             $results[$key]['hd'] = ($result['hd']?true:false);
         }
@@ -82,4 +85,4 @@ class EpisodeRepository extends EntityRepository
 
         return $entityResult;
     }
-} 
+}

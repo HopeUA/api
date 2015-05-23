@@ -8,7 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Table(name="banner")
  */
-class Banner {
+class Banner
+{
 
     /**
      * @ORM\Column(type="integer")

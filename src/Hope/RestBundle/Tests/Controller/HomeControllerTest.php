@@ -2,7 +2,6 @@
 namespace Hope\RestBundle\Tests\Controller;
 
 use Hope\RestBundle\Tests\RestTestCase;
-use MyProject\Proxies\__CG__\OtherProject\Proxies\__CG__\stdClass;
 use Symfony\Component\HttpFoundation\Response;
 
 class HomeControllerTest extends RestTestCase
@@ -46,6 +45,7 @@ class HomeControllerTest extends RestTestCase
      * }
      *
      * @large
+     * @param object $data
      * @depends testRequest
      */
     public function testBanners($data)
@@ -78,6 +78,7 @@ class HomeControllerTest extends RestTestCase
      * }
      *
      * @large
+     * @param $data
      * @depends testRequest
      */
     public function testLive($data)
@@ -107,6 +108,7 @@ class HomeControllerTest extends RestTestCase
      * }
      *
      * @large
+     * @param object $data
      * @depends testRequest
      */
     public function testCategories($data)
@@ -145,6 +147,7 @@ class HomeControllerTest extends RestTestCase
      * }
      *
      * @large
+     * @param object $data
      * @depends testRequest
      */
     public function testPrograms($data)
@@ -197,6 +200,7 @@ class HomeControllerTest extends RestTestCase
      * }
      *
      * @large
+     * @param object $data
      * @depends testRequest
      */
     public function testVideos($data)
@@ -229,6 +233,7 @@ class HomeControllerTest extends RestTestCase
      * }
      *
      * @large
+     * @param object $data
      * @depends testRequest
      */
     public function testAbout($data)

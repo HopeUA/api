@@ -7,7 +7,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Table(name="hope_video_files2")
  */
-class HopeVideo {
+class HopeVideo
+{
 
     /**
      * @ORM\Column(type="integer")

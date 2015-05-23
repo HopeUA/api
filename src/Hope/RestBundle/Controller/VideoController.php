@@ -5,83 +5,49 @@ namespace Hope\RestBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class VideoController extends Controller
 {
 
-    public function indexAction(Request $request){
+    public function indexAction(Request $request)
+    {
 
         $params = array();
 
         // Получаем GET переменные
         // код программы
-        if($request->get('program_code')!=''){
-            $params['program_code']       = $request->get('program_code');
+        if ($request->query->get('program_code')!='') {
+            $params['program_code']       = $request->query->get('program_code');
         }
-        if($request->get('program_category')) {
-            $params['program_category']   = $request->get('program_category');
+        if ($request->query->get('program_category')) {
+            $params['program_category']   = $request->query->get('program_category');
         }
-        if($request->get('code')) {
-            $params['code']               = $request->get('code');
+        if ($request->query->get('code')) {
+            $params['code']               = $request->query->get('code');
         }
-        if($request->get('text')){
-            $params['text']               = $request->get('text');
+        if ($request->query->get('text')) {
+            $params['text']               = $request->query->get('text');
             $params['text']               = addcslashes($params['text'], "%_");
         }
-        if($request->get('sort')){
-            $params['sort']               = $request->get('sort');
+        if ($request->query->get('sort')) {
+            $params['sort']               = $request->query->get('sort');
         }
-        if($request->get('limit')){
-            $params['limit']              = $request->get('limit');
+        if ($request->query->get('limit')) {
+            $params['limit']              = $request->query->get('limit');
         }
 
-        $resolver = new OptionsResolver();
-        $this->configureOptions($resolver);
-        $this->options = $resolver->resolve($params);
+        $videoList = $this->get('hope.video.service')->getVideos($params);
 
-        if(count($this->options)>1){
-            $em = $this->getDoctrine()->getManager();
-            $videos = $em->getRepository('HopeRestBundle:Episode')
-                ->getByParams($this->options);
-        }
-        //обработка полученных видео объектов
-        if(!empty($videos)){
-
-            $videoList = [];
-            foreach($videos as $key=>$video){
-                $vid = $video->getId();
-                $videoList[$key]['code'] = $video->getCode();
-                $videoList[$key]['title'] = $video->getTitle();
-                $videoList[$key]['desc'] = $video->getDescription();
-                $videoList[$key]['author'] = $video->getAuthor();
-                $videoList[$key]['duration'] = $video->getDuration();
-                $videoList[$key]['publish_time'] = $video->getPublishTime()->format( 'Y-m-d H:i:s' );
-                $videoList[$key]['hd'] = $video->getHd();
-                $videoList[$key]['image'] = 'http://share.yourhope.tv/'.$video->getCode().'.jpg';
-                $videoList[$key]['link'] = array(
-                    "download" => 'http://share.yourhope.tv/'.$video->getCode().'.mov',
-                    "watch"    => 'https://www.youtube.com/watch?v='.$video->getWatch()
-                );
-                $programVideo = $video->getProgram();
-                $videoList[$key]['program'] = $programVideo->getCode();
-            }
-
-        }else{
+        if (empty($videoList)) {
             $videoListError = array(
                 'error' => true,
                 'message' => "Ошибка"
             );
-
-        }
-
-        if(empty($videoList)){
             $jsonVideos = json_encode($videoListError, JSON_UNESCAPED_UNICODE);
             $response = new Response($jsonVideos, 404);
             $response->headers->set('Content-Type', 'application/json; charset=utf8');
 
-        }else{
+        } else {
             $jsonVideos = json_encode($videoList, JSON_UNESCAPED_UNICODE);
             $response = new Response($jsonVideos);
             $response->headers->set('Content-Type', 'application/json; charset=utf8');
@@ -90,21 +56,4 @@ class VideoController extends Controller
         return $response;
 
     }
-
-    protected function configureOptions(OptionsResolverInterface $resolver)
-    {
-        $resolver->setDefaults(array(
-            'limit' => '0|10'
-        ));
-
-        $resolver->setOptional(array('program_code'));
-        $resolver->setOptional(array('program_category'));
-        $resolver->setOptional(array('code'));
-        $resolver->setOptional(array('text'));
-        $resolver->setOptional(array('sort'));
-        $resolver->setOptional(array('limit'));
-
-
-    }
-
-} 
+}
