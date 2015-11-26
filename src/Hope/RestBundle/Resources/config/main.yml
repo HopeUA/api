@@ -1,4 +1,4 @@
 live:
   hopeua:
     rtmp: rtmp://stream.hope.ua/hopeua/live_1
-    hls: http://tv-nadiya-cdn.hope.ua/smil:hopeua.smil/playlist.m3u8
+    hls: http://stream.hope.ua:1935/hopeua/smil:hopeua.smil/playlist.m3u8
